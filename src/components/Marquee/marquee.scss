@@ -1,0 +1,15 @@
+.marquee {
+  max-width: 100vw;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
+.move {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.track {
+  white-space: nowrap;
+}
