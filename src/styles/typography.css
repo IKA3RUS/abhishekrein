@@ -1,0 +1,177 @@
+/** Reset Tailwind text classes */
+
+@theme {
+  --text-*: initial;
+}
+
+/** Define Tailwind utilities for typography */
+
+@utility typography-display-1 {
+  font-family: "Funnel Display", sans-serif;
+  font-size: 300px;
+  font-weight: 400;
+  letter-spacing: -2px;
+  line-height: 400px;
+}
+
+@utility typography-display-2 {
+  font-family: "Funnel Display", sans-serif;
+  font-size: 200px;
+  font-weight: 400;
+  letter-spacing: -4px;
+  line-height: 300px;
+}
+
+@utility typography-display-3 {
+  font-family: "Funnel Display", sans-serif;
+  font-size: 133px;
+  font-weight: 400;
+  letter-spacing: -1.35px;
+  line-height: 200px;
+}
+
+@utility typography-display-4 {
+  font-family: "Funnel Display", sans-serif;
+  font-size: 89px;
+  font-weight: 400;
+  letter-spacing: 0.25px;
+  line-height: 132px;
+}
+
+@utility typography-head-1 {
+  font-family: "Funnel Display", sans-serif;
+  font-weight: 600;
+  font-size: 54px;
+  line-height: 64px;
+  letter-spacing: -0.75px;
+}
+
+@utility typography-head-2 {
+  font-family: "Funnel Display", sans-serif;
+  font-weight: 600;
+  font-size: 45px;
+  line-height: 52px;
+  letter-spacing: -0.45px;
+}
+
+@utility typography-head-3 {
+  font-family: "Funnel Display", sans-serif;
+  font-weight: 600;
+  font-size: 38px;
+  line-height: 48px;
+  letter-spacing: -0.25px;
+}
+
+@utility typography-head-4 {
+  font-family: "Funnel Display", sans-serif;
+  font-weight: 600;
+  font-size: 32px;
+  line-height: 40px;
+  letter-spacing: -0.3px;
+}
+
+@utility typography-head-5 {
+  font-family: "Funnel Display", sans-serif;
+  font-weight: 600;
+  font-size: 27px;
+  line-height: 36px;
+  letter-spacing: -0.05px;
+}
+
+@utility typography-head-6 {
+  font-family: "Funnel Display", sans-serif;
+  font-weight: 600;
+  font-size: 23px;
+  line-height: 32px;
+  letter-spacing: -0.2px;
+}
+
+@utility typography-text-1 {
+  font-family: "Funnel Sans", sans-serif;
+  font-weight: 400;
+  font-size: 19px;
+  line-height: 28px;
+  letter-spacing: 0.3px;
+}
+
+@utility typography-text-2 {
+  font-family: "Funnel Sans", sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.4px;
+}
+
+@utility typography-text-3 {
+  font-family: "Funnel Sans", sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 20px;
+  letter-spacing: 0.5px;
+}
+
+@utility typography-text-4 {
+  font-family: "Funnel Sans", sans-serif;
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 20px;
+  letter-spacing: 0.45px;
+}
+
+@utility typography-label-1 {
+  font-family: "Funnel Sans", sans-serif;
+  font-weight: 500;
+  font-size: 19px;
+  line-height: 28px;
+  letter-spacing: 0.3px;
+}
+
+@utility typography-label-2 {
+  font-family: "Funnel Sans", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.4px;
+}
+
+@utility typography-label-3 {
+  font-family: "Funnel Sans", sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 20px;
+  letter-spacing: 0.5px;
+}
+
+@utility typography-label-4 {
+  font-family: "Funnel Sans", sans-serif;
+  font-weight: 500;
+  font-size: 11px;
+  line-height: 20px;
+  letter-spacing: 0.45px;
+}
+
+/** Import fonts */
+
+@font-face {
+  font-family: "Funnel Display";
+  src: url("/fonts/FunnelDisplay[wght].woff2") format("woff2");
+  font-weight: 300 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Funnel Sans";
+  src: url("/fonts/FunnelSans[wght].woff2") format("woff2");
+  font-weight: 300 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Funnel Sans";
+  src: url("/fonts/FunnelSans-Italic[wght].woff2") format("woff2");
+  font-weight: 300 800;
+  font-style: italic;
+  font-display: swap;
+}
