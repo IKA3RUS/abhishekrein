@@ -1,1 +1,0 @@
-export { AnimatedBeam } from "./AnimatedBeam";
