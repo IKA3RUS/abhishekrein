@@ -10,6 +10,9 @@ const config: Config = {
   importOrder: [
     "<BUILTIN_MODULES>",
     "^react",
+    "^vite$",
+    "^@vitejs/",
+    "^@tanstack",
     "<THIRD_PARTY_MODULES>",
     "^@/(?!assets)",
     "^./",
