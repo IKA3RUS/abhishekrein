@@ -1,12 +1,6 @@
 import { Suspense, useEffect, useRef } from "react";
 
-import {
-  Circle,
-  Cloud,
-  Clouds,
-  GradientTexture,
-  GradientType,
-} from "@react-three/drei";
+import { Circle, GradientTexture, GradientType } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { EffectComposer } from "@react-three/postprocessing";
 import { useMotionValue, useSpring } from "motion/react";
@@ -14,9 +8,9 @@ import * as THREE from "three";
 
 import { AnimatedBeam } from "@/components/AnimatedBeam";
 import { Button } from "@/components/Button";
+import { Cloud, Clouds } from "@/components/Clouds";
 import { useBreakpointValue } from "@/hooks/useBreakpointValue";
 import { useClipboard } from "@/hooks/useClipboard";
-import { useMounted } from "@/hooks/useMounted";
 import { useWorldBounds } from "@/hooks/useWorldBounds";
 import { Dither } from "@/shaders/dither/Dither";
 
@@ -56,40 +50,32 @@ function FloatingClouds() {
     groupRef.current.position.y = springY.get() + noiseY + Y_OFFSET;
   });
 
-  // Rendering clouds without waiting for mount causes inconsistent sizing on
-  // page navigation
-  const mounted = useMounted();
-
   return (
     <Clouds material={THREE.MeshBasicMaterial}>
-      {mounted && (
-        <>
-          <group ref={groupRef}>
-            <Cloud
-              seed={7}
-              segments={30}
-              bounds={[10, 1, 1]}
-              concentrate="outside"
-              volume={5}
-              speed={0.1}
-              opacity={0.25}
-              fade={15}
-              color="white"
-            />
-          </group>
-          <Cloud
-            seed={26}
-            segments={40}
-            bounds={[20, 2, 1]}
-            concentrate="outside"
-            volume={10}
-            speed={0.02}
-            fade={8}
-            color="white"
-            position={[0, -5, 0]}
-          />
-        </>
-      )}
+      <group ref={groupRef}>
+        <Cloud
+          seed={15}
+          segments={30}
+          bounds={[10, 1, 1]}
+          concentrate="outside"
+          volume={5}
+          speed={0.1}
+          opacity={0.25}
+          fade={10}
+          color="white"
+        />
+      </group>
+      <Cloud
+        seed={47}
+        segments={40}
+        bounds={[20, 2, 1]}
+        concentrate="outside"
+        volume={10}
+        speed={0.01}
+        fade={8}
+        color="white"
+        position={[0, -5, 0]}
+      />
     </Clouds>
   );
 }
@@ -164,7 +150,7 @@ function Hero() {
   const animatedBeamContainerRef = useRef<HTMLDivElement | null>(null);
 
   return (
-    <section className="relative flex h-dvh w-full flex-col items-center justify-center bg-[linear-gradient(to_bottom,var(--color-violet-9)_0%,var(--color-violet-7)_15%,var(--color-violet-7)_80%,var(--color-white)_100%)]">
+    <section className="relative flex h-dvh w-full flex-col items-center justify-center bg-[linear-gradient(to_bottom,var(--color-violet-9)_0%,var(--color-violet-7)_15%,var(--color-violet-7)_95%,var(--color-white)_100%)]">
       <Scene />
       <div
         className="relative flex w-full flex-col items-center justify-center bg-yellow-2/0 md:flex-row"
