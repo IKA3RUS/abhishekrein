@@ -1,13 +1,20 @@
-node_modules
+# OS
 .DS_Store
+
+# Deps
+node_modules
+
+# Environment
+.env
+*.local
+
+# Build
 dist
 dist-ssr
-*.local
-.env
-.nitro
+.output
+
+# Framework & tooling cache
 .tanstack
 .wrangler
-.output
-.vinxi
+.content-collections
 __unconfig*
-todos.json
