@@ -1,7 +1,8 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 
-import { MDXContent } from "@content-collections/mdx/react";
 import { allWorks } from "content-collections";
+import { SafeMdxRenderer } from "safe-mdx";
+import { mdxParse } from "safe-mdx/parse";
 
 function findWork(slug: string) {
   const work = allWorks.find((work) => work._meta.path === slug);
@@ -18,12 +19,13 @@ export const Route = createFileRoute("/work/$work/")({
 
 function Work() {
   const work = Route.useLoaderData();
+  const mdast = mdxParse(work.content);
 
   return (
     <div>
       <h1>{work.title}</h1>
       <p>{work.description}</p>
-      <MDXContent code={work.mdx} />
+      <SafeMdxRenderer markdown={work.content} mdast={mdast} components={{}} />
     </div>
   );
 }
