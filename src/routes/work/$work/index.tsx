@@ -13,19 +13,29 @@ function findWork(slug: string) {
 }
 
 export const Route = createFileRoute("/work/$work/")({
-  loader: ({ params: { work } }) => findWork(work),
+  loader: ({ params: { work: slug } }) => {
+    const work = findWork(slug);
+    const mdast = mdxParse(work.content);
+    return {
+      ...work,
+      mdast,
+    };
+  },
   component: Work,
 });
 
 function Work() {
   const work = Route.useLoaderData();
-  const mdast = mdxParse(work.content);
 
   return (
     <div>
       <h1>{work.title}</h1>
       <p>{work.description}</p>
-      <SafeMdxRenderer markdown={work.content} mdast={mdast} components={{}} />
+      <SafeMdxRenderer
+        markdown={work.content}
+        mdast={work.mdast}
+        components={{}}
+      />
     </div>
   );
 }

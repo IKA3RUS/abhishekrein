@@ -9,11 +9,11 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as homeIndexRouteImport } from './routes/(home)/index'
 import { Route as WorkWorkIndexRouteImport } from './routes/work/$work/index'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
+const homeIndexRoute = homeIndexRouteImport.update({
+  id: '/(home)/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
@@ -24,16 +24,16 @@ const WorkWorkIndexRoute = WorkWorkIndexRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof homeIndexRoute
   '/work/$work/': typeof WorkWorkIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/': typeof homeIndexRoute
   '/work/$work': typeof WorkWorkIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/(home)/': typeof homeIndexRoute
   '/work/$work/': typeof WorkWorkIndexRoute
 }
 export interface FileRouteTypes {
@@ -41,21 +41,21 @@ export interface FileRouteTypes {
   fullPaths: '/' | '/work/$work/'
   fileRoutesByTo: FileRoutesByTo
   to: '/' | '/work/$work'
-  id: '__root__' | '/' | '/work/$work/'
+  id: '__root__' | '/(home)/' | '/work/$work/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  homeIndexRoute: typeof homeIndexRoute
   WorkWorkIndexRoute: typeof WorkWorkIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/(home)/': {
+      id: '/(home)/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof homeIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/work/$work/': {
@@ -69,7 +69,7 @@ declare module '@tanstack/react-router' {
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  homeIndexRoute: homeIndexRoute,
   WorkWorkIndexRoute: WorkWorkIndexRoute,
 }
 export const routeTree = rootRouteImport
