@@ -3,7 +3,12 @@ import { Suspense, lazy } from "react";
 import { ClientOnly } from "@tanstack/react-router";
 
 import { AnimatedTypographyBeams } from "@/components/AnimatedTypographyBeams";
-import { Button } from "@/components/Button";
+import {
+  Button,
+  ButtonLabel,
+  ButtonLeadingIcon,
+  ButtonTrailingIcon,
+} from "@/components/Button";
 import { useClipboard } from "@/hooks/useClipboard";
 
 import AscentFallIka3rusMicrographic from "@/assets/home/ascent-fall-ika3rus.svg?react";
@@ -23,20 +28,14 @@ function EmailButton({ ...props }) {
   };
 
   return (
-    <Button onClick={handleCopy} {...props}>
-      <MailIcon />
-      w@abhishekrein.xyz
-      {!isCopied ? (
-        <CopyAllIcon
-          data-icon="inline-end"
-          className="fill-yellow-7! transition-[fill] duration-100 group-hover/button:fill-neutral-6! group-data-[tap=true]/button:fill-neutral-6!"
-        />
-      ) : (
-        <LibraryAddCheckIcon
-          data-icon="inline-end"
-          className="fill-yellow-4!"
-        />
-      )}
+    <Button onMouseUp={handleCopy} onTouchEnd={handleCopy} {...props}>
+      <ButtonLeadingIcon>
+        <MailIcon />
+      </ButtonLeadingIcon>
+      <ButtonLabel>w@abhishekrein.xyz</ButtonLabel>
+      <ButtonTrailingIcon>
+        {!isCopied ? <CopyAllIcon /> : <LibraryAddCheckIcon />}
+      </ButtonTrailingIcon>
     </Button>
   );
 }

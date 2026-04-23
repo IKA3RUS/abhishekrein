@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { type HTMLAttributes } from "react";
 
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { type VariantProps, cva } from "class-variance-authority";
@@ -8,16 +8,16 @@ import { type VariantProps, cva } from "class-variance-authority";
 import { cn } from "@/lib/cn";
 
 const buttonVariants = cva(
-  "group/button relative inline-flex shrink-0 cursor-pointer overflow-hidden whitespace-nowrap uppercase outline-none select-none *:data-[slot=label]:flex *:data-[slot=label]:items-center [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button relative inline-flex shrink-0 cursor-pointer items-center overflow-hidden whitespace-nowrap uppercase outline-none select-none *:data-[slot=label]:flex *:data-[slot=label]:items-center [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
         default:
-          "[a]:hover:bg-primary/80 bg-yellow-4 typography-label-2 text-neutral-11 *:data-[slot=label]:group-hover/button:text-yellow-4 *:data-[slot=label]:group-data-[tap=true]/button:text-yellow-4 *:data-[slot=sweep]:border-yellow-6 *:data-[slot=sweep]:bg-neutral-11 [&_svg]:fill-violet-7 [&_svg]:group-hover/button:fill-yellow-4 [&_svg]:group-hover/button:text-yellow-4 [&_svg]:group-hover/button:transition-[fill]",
+          "bg-yellow-4 typography-label-2 text-neutral-11 *:data-[slot=label]:group-active/button:text-yellow-4 *:data-[slot=sweep]:border-yellow-6 *:data-[slot=sweep]:bg-neutral-11 *:data-[slot=sweep]:group-active/button:border-neutral-7 *:data-[slot=trailing-icon]:bg-violet-7 [&_[data-slot=leading-icon]_svg]:fill-violet-7 [&_[data-slot=trailing-icon]_svg]:fill-white [&_svg]:group-active/button:fill-yellow-4 [&_svg]:group-active/button:text-yellow-4 [&_svg]:group-active/button:transition-[fill]",
       },
       size: {
         default:
-          "h-17 *:data-[slot=label]:gap-3 *:data-[slot=label]:px-6 *:data-[slot=label]:*:data-[icon=inline-end]:ml-auto",
+          "h-17 gap-2 p-1 px-8 has-data-[slot=trailing-icon]:pr-1 *:data-[slot=trailing-icon]:ml-6",
       },
     },
     defaultVariants: {
@@ -31,38 +31,75 @@ function Button({
   className,
   variant = "default",
   size = "default",
+  children,
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
-  const [touch, setTouch] = useState(false);
-
-  const handleTouchStart = () => {
-    setTouch(true);
-  };
-  const handleTouchEnd = () => {
-    setTimeout(() => setTouch(false), 300);
-  };
-
   return (
     <ButtonPrimitive
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
-      data-tap={touch}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
       {...props}
     >
       <div
         data-slot="sweep"
-        className="absolute inset-0 size-full translate-x-[0.25px] translate-y-[calc(100%-2px)] border-t-2 transition-[translate] duration-100 ease-in-out group-hover/button:translate-y-0 group-data-[tap=true]/button:translate-y-0"
+        className="absolute inset-0 size-full translate-x-[0.25px] translate-y-[calc(100%-2px)] border-t-2 transition-[translate] duration-100 ease-in-out group-active/button:translate-y-0"
       />
-      <span
-        data-slot="label"
-        className="z-1 w-full text-left transition-[color,font-weight] duration-100 ease-in-out"
-      >
-        {props.children}
-      </span>
+      {children}
     </ButtonPrimitive>
   );
 }
 
-export { Button, buttonVariants };
+function ButtonLabel({ className, ...props }: HTMLAttributes<HTMLSpanElement>) {
+  return (
+    <span
+      data-slot="label"
+      className={cn(
+        "z-1 w-full group-hover/button:animate-vibrate group-active/button:animate-vibrate group-active/button:[--vibrate-amplitude:2px] group-active/button:[animation-duration:0.05s]",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+function ButtonLeadingIcon({
+  className,
+  ...props
+}: HTMLAttributes<HTMLSpanElement>) {
+  return (
+    <span
+      data-slot="leading-icon"
+      className={cn("z-1", className)}
+      {...props}
+    />
+  );
+}
+
+function ButtonTrailingIcon({
+  className,
+  children,
+  ...props
+}: HTMLAttributes<HTMLSpanElement>) {
+  return (
+    <span
+      data-slot="trailing-icon"
+      className={cn(
+        "z-1 flex aspect-square h-full items-center justify-center",
+        className,
+      )}
+      {...props}
+    >
+      <span className="flex size-full items-center justify-center overflow-hidden *:group-active/button:animate-marquee-x *:group-active/button:[animation-duration:0.5s]">
+        {children}
+      </span>
+    </span>
+  );
+}
+
+export {
+  Button,
+  ButtonLeadingIcon,
+  ButtonLabel,
+  ButtonTrailingIcon,
+  buttonVariants,
+};
