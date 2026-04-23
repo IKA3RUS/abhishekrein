@@ -35,6 +35,9 @@ importers:
       '@tanstack/react-devtools':
         specifier: ^0.10.0
         version: 0.10.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(csstype@3.2.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(solid-js@1.9.12)
+      '@tanstack/react-hotkeys':
+        specifier: ^0.9.1
+        version: 0.9.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@tanstack/react-router':
         specifier: ^1.168.10
         version: 1.168.10(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -1616,6 +1619,10 @@ packages:
     resolution: {integrity: sha512-NaOGLRrddszbQj9upGat6HG/4TKvXLvu+osAIgfxPYA+eIvYKv8GKDJOrY2D3/U9MRnKfMWD7bU4jeD4xmqyIg==}
     engines: {node: '>=20.19'}
 
+  '@tanstack/hotkeys@0.7.1':
+    resolution: {integrity: sha512-YHVO1z6wnvUCu7bg870Kv5k2D+FIuIOSIcbN0dAmTTsJ3mLMDLwcTVx0qVaq+SZp1B514JJTqGVstvUp85yIpQ==}
+    engines: {node: '>=18'}
+
   '@tanstack/query-core@5.95.2':
     resolution: {integrity: sha512-o4T8vZHZET4Bib3jZ/tCW9/7080urD4c+0/AUaYVpIqOsr7y0reBc1oX3ttNaSW5mYyvZHctiQ/UOP2PfdmFEQ==}
 
@@ -1625,6 +1632,13 @@ packages:
     peerDependencies:
       '@types/react': '>=16.8'
       '@types/react-dom': '>=16.8'
+      react: '>=16.8'
+      react-dom: '>=16.8'
+
+  '@tanstack/react-hotkeys@0.9.1':
+    resolution: {integrity: sha512-/qdQUUVkYAHAWRGdFXqFgWpW/S+a6OzkvxWNWKLLDHQODJlO6EPBPa073CglaafBfzig58RK07T09ET+NnZhpg==}
+    engines: {node: '>=18'}
+    peerDependencies:
       react: '>=16.8'
       react-dom: '>=16.8'
 
@@ -5609,6 +5623,10 @@ snapshots:
 
   '@tanstack/history@1.161.6': {}
 
+  '@tanstack/hotkeys@0.7.1':
+    dependencies:
+      '@tanstack/store': 0.9.3
+
   '@tanstack/query-core@5.95.2': {}
 
   '@tanstack/react-devtools@0.10.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(csstype@3.2.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(solid-js@1.9.12)':
@@ -5623,6 +5641,13 @@ snapshots:
       - csstype
       - solid-js
       - utf-8-validate
+
+  '@tanstack/react-hotkeys@0.9.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+    dependencies:
+      '@tanstack/hotkeys': 0.7.1
+      '@tanstack/react-store': 0.9.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react: 19.2.4
+      react-dom: 19.2.4(react@19.2.4)
 
   '@tanstack/react-query@5.95.2(react@19.2.4)':
     dependencies:

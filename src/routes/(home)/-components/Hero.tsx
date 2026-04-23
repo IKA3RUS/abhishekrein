@@ -3,42 +3,12 @@ import { Suspense, lazy } from "react";
 import { ClientOnly } from "@tanstack/react-router";
 
 import { AnimatedTypographyBeams } from "@/components/AnimatedTypographyBeams";
-import {
-  Button,
-  ButtonLabel,
-  ButtonLeadingIcon,
-  ButtonTrailingIcon,
-} from "@/components/Button";
-import { useClipboard } from "@/hooks/useClipboard";
+import { EmailButton } from "@/components/EmailButton";
 
 import AscentFallIka3rusMicrographic from "@/assets/home/ascent-fall-ika3rus.svg?react";
 import PostFormCreativityMicrographic from "@/assets/home/post-form-creativity.svg?react";
 
-import CopyAllIcon from "@material-symbols/svg-700/sharp/copy_all-fill.svg?react";
-import LibraryAddCheckIcon from "@material-symbols/svg-700/sharp/library_add_check-fill.svg?react";
-import MailIcon from "@material-symbols/svg-700/sharp/mail-fill.svg?react";
-
 const HeroScene = lazy(() => import("./HeroScene.client"));
-
-function EmailButton({ ...props }) {
-  const { copy, isCopied } = useClipboard();
-
-  const handleCopy = () => {
-    copy("w@abhishekrein.xyz");
-  };
-
-  return (
-    <Button onMouseUp={handleCopy} onTouchEnd={handleCopy} {...props}>
-      <ButtonLeadingIcon>
-        <MailIcon />
-      </ButtonLeadingIcon>
-      <ButtonLabel>w@abhishekrein.xyz</ButtonLabel>
-      <ButtonTrailingIcon>
-        {!isCopied ? <CopyAllIcon /> : <LibraryAddCheckIcon />}
-      </ButtonTrailingIcon>
-    </Button>
-  );
-}
 
 function Hero() {
   return (

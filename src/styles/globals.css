@@ -3,6 +3,7 @@
 @import "./colors.css";
 @import "./typography.css";
 @import "./animations.css";
+@import "./variants.css";
 
 body {
   -webkit-font-smoothing: antialiased;

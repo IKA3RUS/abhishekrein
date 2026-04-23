@@ -5,15 +5,16 @@ import { type HTMLAttributes } from "react";
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { type VariantProps, cva } from "class-variance-authority";
 
+import { Kbd, KbdGroup } from "@/components/Kbd/Kbd";
 import { cn } from "@/lib/cn";
 
 const buttonVariants = cva(
-  "group/button relative inline-flex shrink-0 cursor-pointer items-center overflow-hidden whitespace-nowrap uppercase outline-none select-none *:data-[slot=label]:flex *:data-[slot=label]:items-center [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button relative inline-flex shrink-0 cursor-pointer items-center whitespace-nowrap uppercase outline-none select-none *:data-[slot=label]:flex *:data-[slot=label]:items-center [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
         default:
-          "bg-yellow-4 typography-label-2 text-neutral-11 *:data-[slot=label]:group-active/button:text-yellow-4 *:data-[slot=sweep]:border-yellow-6 *:data-[slot=sweep]:bg-neutral-11 *:data-[slot=sweep]:group-active/button:border-neutral-7 *:data-[slot=trailing-icon]:bg-violet-7 [&_[data-slot=leading-icon]_svg]:fill-violet-7 [&_[data-slot=trailing-icon]_svg]:fill-white [&_svg]:group-active/button:fill-yellow-4 [&_svg]:group-active/button:text-yellow-4 [&_svg]:group-active/button:transition-[fill]",
+          "bg-yellow-4 typography-label-2 text-neutral-11 *:data-[slot=label]:group-active/button:text-yellow-4 **:data-[slot=sweep]:border-yellow-6 **:data-[slot=sweep]:bg-neutral-11 group-active/button:**:data-[slot=sweep]:border-neutral-7 *:data-[slot=trailing-icon]:bg-violet-7 [&_[data-slot=leading-icon]_svg]:fill-violet-7 [&_[data-slot=trailing-icon]_svg]:fill-white [&_svg]:group-active/button:fill-yellow-4 [&_svg]:group-active/button:text-yellow-4 [&_svg]:group-active/button:transition-[fill]",
       },
       size: {
         default:
@@ -40,10 +41,12 @@ function Button({
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     >
-      <div
-        data-slot="sweep"
-        className="absolute inset-0 size-full translate-x-[0.25px] translate-y-[calc(100%-2px)] border-t-2 transition-[translate] duration-100 ease-in-out group-active/button:translate-y-0"
-      />
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div
+          data-slot="sweep"
+          className="absolute inset-0 size-full translate-x-[0.25px] translate-y-[calc(100%-2px)] border-t-2 transition-[translate] duration-100 ease-in-out group-active/button:translate-y-0"
+        />
+      </div>
       {children}
     </ButtonPrimitive>
   );
@@ -75,6 +78,25 @@ function ButtonLeadingIcon({
   );
 }
 
+function ButtonKbd(props: React.ComponentProps<typeof Kbd>) {
+  return <Kbd {...props} />;
+}
+
+function ButtonKbdGroup({
+  className,
+  ...props
+}: React.ComponentProps<typeof KbdGroup>) {
+  return (
+    <KbdGroup
+      className={cn(
+        "absolute right-0 -bottom-7 hidden pointer-fine:inline-flex",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
 function ButtonTrailingIcon({
   className,
   children,
@@ -89,7 +111,7 @@ function ButtonTrailingIcon({
       )}
       {...props}
     >
-      <span className="flex size-full items-center justify-center overflow-hidden *:group-active/button:animate-marquee-x *:group-active/button:[animation-duration:0.5s]">
+      <span className="flex size-full items-center justify-center overflow-hidden *:group-hover/button:animate-marquee-x *:group-active/button:animate-marquee-x *:group-active/button:[animation-duration:0.5s]">
         {children}
       </span>
     </span>
@@ -98,6 +120,8 @@ function ButtonTrailingIcon({
 
 export {
   Button,
+  ButtonKbd,
+  ButtonKbdGroup,
   ButtonLeadingIcon,
   ButtonLabel,
   ButtonTrailingIcon,
