@@ -1,0 +1,33 @@
+@theme {
+  --animate-vibrate: vibrate var(--vibrate-period, 1s) linear infinite;
+  --animate-marquee-x: marquee-x var(--marquee-period, 2s) linear infinite;
+
+  @keyframes marquee-x {
+    0% {
+      transform: translateX(0);
+    }
+    40% {
+      transform: translateX(300%);
+      animation-timing-function: steps(1, end);
+    }
+    60% {
+      transform: translateX(-300%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes vibrate {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(calc(var(--vibrate-amplitude, 0.5px) * -1));
+    }
+    75% {
+      transform: translateX(var(--vibrate-amplitude, 0.5px));
+    }
+  }
+}
