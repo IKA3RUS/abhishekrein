@@ -1,8 +1,8 @@
-import { Suspense, lazy, useRef } from "react";
+import { Suspense, lazy } from "react";
 
 import { ClientOnly } from "@tanstack/react-router";
 
-import { AnimatedBeam } from "@/components/AnimatedBeam";
+import { AnimatedTypographyBeams } from "@/components/AnimatedTypographyBeams";
 import { Button } from "@/components/Button";
 import { useClipboard } from "@/hooks/useClipboard";
 
@@ -42,8 +42,6 @@ function EmailButton({ ...props }) {
 }
 
 function Hero() {
-  const animatedBeamContainerRef = useRef<HTMLDivElement | null>(null);
-
   return (
     <section className="relative flex h-dvh w-full flex-col items-center justify-center bg-[linear-gradient(to_bottom,var(--color-violet-9)_0%,var(--color-violet-7)_15%,var(--color-violet-7)_95%,var(--color-white)_100%)]">
       <ClientOnly fallback={null}>
@@ -51,37 +49,14 @@ function Hero() {
           <HeroScene />
         </Suspense>
       </ClientOnly>
-      <div
-        className="relative flex w-full flex-col items-center justify-center bg-yellow-2/0 md:flex-row"
-        ref={animatedBeamContainerRef}
-      >
+      <AnimatedTypographyBeams className="relative flex w-full flex-col items-center justify-center md:flex-row">
         <span className="z-1 translate-y-1/3 typography-display-4 text-neutral-11 transition-[font-size] md:-translate-y-1/2 md:typography-display-3 xl:typography-display-2">
           abhishek
         </span>
-        <AnimatedBeam
-          className="-top-12.5 transition-[top] md:-top-35.5 xl:-top-53.5"
-          containerRef={animatedBeamContainerRef}
-        />
-        <AnimatedBeam
-          className="-top-8.25 transition-[top] md:-top-28.75 xl:-top-43.5"
-          containerRef={animatedBeamContainerRef}
-        />
-        <AnimatedBeam
-          className="top-2.5 transition-[top] md:-top-12.75 xl:-top-19"
-          containerRef={animatedBeamContainerRef}
-        />
         <span className="z-1 bg-violet-3/0 typography-display-4 text-neutral-11 md:typography-display-3 xl:typography-display-2">
           rein
         </span>
-        <AnimatedBeam
-          className="top-13.75 transition-[top] md:-top-3.75 xl:-top-6"
-          containerRef={animatedBeamContainerRef}
-        />
-        <AnimatedBeam
-          className="top-24.5 transition-[top] md:top-12 xl:top-18.5"
-          containerRef={animatedBeamContainerRef}
-        />
-      </div>
+      </AnimatedTypographyBeams>
       <div className="z-1 flex flex-col gap-0 typography-text-2 text-neutral-11 transition-[margin-left,gap] md:-ml-34 md:gap-4 md:typography-text-1">
         <span className="">I create human-centered eye-candy</span>
         <span className="">アビシェク レイン</span>
