@@ -1,15 +1,13 @@
+import { InfoChip } from "@/components/InfoChip/InfoChip";
 import { cn } from "@/lib/cn";
 
-function Kbd({ className, ...props }: React.ComponentProps<"kbd">) {
+function Kbd({ className, children, ...props }: React.ComponentProps<"kbd">) {
   return (
-    <kbd
-      data-slot="kbd"
-      className={cn(
-        "pointer-events-none inline-flex h-6 w-fit min-w-6 items-center justify-center gap-1 bg-neutral-2 px-1 typography-text-4 [&_svg:not([class*='size-'])]:size-3",
-        className,
-      )}
-      {...props}
-    />
+    <kbd data-slot="kbd" className="contents" {...props}>
+      <InfoChip className={cn("pointer-events-none justify-center px-1", className)}>
+        {children}
+      </InfoChip>
+    </kbd>
   );
 }
 

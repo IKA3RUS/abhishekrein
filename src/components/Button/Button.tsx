@@ -5,7 +5,7 @@ import { type HTMLAttributes } from "react";
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { type VariantProps, cva } from "class-variance-authority";
 
-import { Kbd, KbdGroup } from "@/components/Kbd/Kbd";
+import { Kbd, KbdGroup } from "@/components/Kbd";
 import { cn } from "@/lib/cn";
 
 const buttonVariants = cva(
