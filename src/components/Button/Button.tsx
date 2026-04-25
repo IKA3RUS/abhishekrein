@@ -1,5 +1,3 @@
-"use client";
-
 import { type HTMLAttributes } from "react";
 
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
