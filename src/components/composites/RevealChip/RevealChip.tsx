@@ -2,7 +2,12 @@ import * as React from "react";
 
 import { type VariantProps, cva } from "class-variance-authority";
 
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/Popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/primitives/Popover";
+
 import { cn } from "@/lib/cn";
 
 import AddIcon from "@material-symbols/svg-700/sharp/add-fill.svg?react";
@@ -114,7 +119,7 @@ function RevealChipIcon({
     <span
       data-slot="reveal-chip-icon"
       className={cn(
-        "inline-flex shrink-0 items-center [&_svg:not([class*='size-'])]:fill-neutral-11",
+        "inline-flex shrink-0 items-center [&_svg:not([class*='size-'])]:fill-violet-8",
         className,
       )}
       {...props}
@@ -127,7 +132,14 @@ function RevealChipLabel({
   ...props
 }: React.HTMLAttributes<HTMLSpanElement>) {
   return (
-    <span data-slot="reveal-chip-label" className={cn(className)} {...props} />
+    <span
+      data-slot="reveal-chip-label"
+      className={cn(
+        "group-data-popup-open/reveal-chip-trigger:animate-vibrate",
+        className,
+      )}
+      {...props}
+    />
   );
 }
 
@@ -143,7 +155,7 @@ function RevealChipSummary({
       </span>
       <span
         data-slot="reveal-chip-summary"
-        className={cn(className)}
+        className={cn("flex items-center gap-1", className)}
         {...props}
       >
         {children}
