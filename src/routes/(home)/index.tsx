@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { Header } from "@/components/Header.tsx";
+import { Header } from "@/components/layout/Header.tsx";
 
 import { Hero } from "./-components/Hero";
 import { Works } from "./-components/Works";

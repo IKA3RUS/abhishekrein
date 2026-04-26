@@ -2,8 +2,9 @@ import { Suspense, lazy } from "react";
 
 import { ClientOnly } from "@tanstack/react-router";
 
-import { AnimatedTypographyBeams } from "@/components/AnimatedTypographyBeams";
-import { EmailButton } from "@/components/EmailButton";
+import { EmailButton } from "@/components/composites/EmailButton";
+
+import { AnimatedTypographyBeams } from "@/components/effects/AnimatedTypographyBeams";
 
 import AscentFallIka3rusMicrographic from "@/assets/home/ascent-fall-ika3rus.svg?react";
 import PostFormCreativityMicrographic from "@/assets/home/post-form-creativity.svg?react";

@@ -6,7 +6,8 @@ import { EffectComposer } from "@react-three/postprocessing";
 import { useMotionValue, useSpring } from "motion/react";
 import * as THREE from "three";
 
-import { Cloud, Clouds } from "@/components/Clouds";
+import { Cloud, Clouds } from "@/components/effects/Clouds";
+
 import { useBreakpointValue } from "@/hooks/useBreakpointValue";
 import { useWorldBounds } from "@/hooks/useWorldBounds";
 import { Dither } from "@/shaders/dither/Dither";
