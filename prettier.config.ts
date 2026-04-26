@@ -9,16 +9,29 @@ const config: Config = {
   tailwindFunctions: ["cn", "twMerge", "tw", "clsx", "cva"],
   importOrder: [
     "<BUILTIN_MODULES>",
-    "^react",
+
+    "^react$",
+    "^react/",
     "^vite$",
     "^@vitejs/",
     "^@tanstack",
+
     "<THIRD_PARTY_MODULES>",
-    "^@/(?!assets)",
-    "^./",
+
+    "^@/components/primitives/",
+    "^@/components/composites/",
+    "^@/components/layout/",
+    "^@/components/effects/",
+
+    "^@/(?!components/)(?!assets/)",
+
+    "^[.]{1,2}/",
+
     "^@material-symbols",
-    ".css$",
-    "^@/assets",
+
+    "\\.css$",
+
+    "^@/assets/",
   ],
   importOrderSeparation: true,
   importOrderSortSpecifiers: true,
