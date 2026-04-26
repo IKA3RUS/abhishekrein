@@ -92,6 +92,7 @@ interface AnimatedBeamProps {
   containerRef: RefObject<HTMLElement | null>;
 
   variant?: "positions" | "horizontal";
+  edgeToEdge?: boolean;
 
   fromRef?: RefObject<HTMLElement | null>;
   toRef?: RefObject<HTMLElement | null>;
@@ -121,6 +122,7 @@ function AnimatedBeam({
   className,
   containerRef,
   variant = "horizontal",
+  edgeToEdge = false,
   fromRef,
   toRef,
   y,
@@ -141,15 +143,22 @@ function AnimatedBeam({
   const id = useId();
   const [pathD, setPathD] = useState("");
   const [svgDimensions, setSvgDimensions] = useState({ width: 0, height: 0 });
+  const [svgLeft, setSvgLeft] = useState(0);
 
   useEffect(() => {
     const updatePath = () => {
       if (!containerRef.current) return;
 
       const containerRect = containerRef.current.getBoundingClientRect();
-      const svgWidth = containerRect.width;
+      const svgWidth =
+        edgeToEdge && variant === "horizontal"
+          ? window.innerWidth
+          : containerRect.width;
       const svgHeight = containerRect.height;
+      const left =
+        edgeToEdge && variant === "horizontal" ? -containerRect.left : 0;
       setSvgDimensions({ width: svgWidth, height: svgHeight });
+      setSvgLeft(left);
 
       if (variant === "horizontal") {
         const startX = 0 + startXOffset;
@@ -204,8 +213,9 @@ function AnimatedBeam({
       width={svgDimensions.width}
       height={svgDimensions.height}
       xmlns="http://www.w3.org/2000/svg"
+      style={{ left: svgLeft }}
       className={cn(
-        "pointer-events-none absolute top-0 left-0 transform-gpu stroke-2",
+        "pointer-events-none absolute top-0 transform-gpu stroke-2",
         className,
       )}
       viewBox={`0 0 ${svgDimensions.width} ${svgDimensions.height}`}

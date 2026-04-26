@@ -11,7 +11,7 @@ import {
   AnimatedBeamGradient,
   AnimatedBeamPath,
   type AnimatedBeamProps,
-} from "@/components/AnimatedBeam";
+} from "@/components/effects/AnimatedBeam";
 
 export type TrackType = "cap" | "ascender" | "x" | "baseline";
 
@@ -139,6 +139,9 @@ export interface AnimatedTypographyBeamsProps extends Pick<
   | "reverse"
   | "pathWidth"
   | "pathOpacity"
+  | "pathColor"
+  | "gradientStartColor"
+  | "gradientStopColor"
   | "delay"
   | "duration"
   | "startXOffset"
@@ -148,6 +151,7 @@ export interface AnimatedTypographyBeamsProps extends Pick<
   className?: string;
   style?: CSSProperties;
   tracks?: Partial<Record<TrackType, TrackOverride>>;
+  edgeToEdge?: boolean;
 }
 
 function AnimatedTypographyBeams({
@@ -158,11 +162,15 @@ function AnimatedTypographyBeams({
   reverse = false,
   pathWidth = 2,
   pathOpacity = 0.25,
+  pathColor,
+  gradientStartColor,
+  gradientStopColor,
   delay = 0,
   duration,
   startXOffset = 0,
   endXOffset = 0,
   tracks: trackOverrides,
+  edgeToEdge = false,
 }: AnimatedTypographyBeamsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -171,6 +179,7 @@ function AnimatedTypographyBeams({
 
   const [lines, setLines] = useState<Line[]>([]);
   const [svgSize, setSvgSize] = useState({ width: 0, height: 0 });
+  const [svgLeft, setSvgLeft] = useState(0);
 
   const durationsRef = useRef(new Map<string, number>());
   const getDuration = (key: string) => {
@@ -185,9 +194,12 @@ function AnimatedTypographyBeams({
     const content = contentRef.current;
     if (!container || !content) return;
     const rect = container.getBoundingClientRect();
-    setSvgSize({ width: rect.width, height: rect.height });
+    const width = edgeToEdge ? window.innerWidth : rect.width;
+    const left = edgeToEdge ? -rect.left : 0;
+    setSvgSize({ width, height: rect.height });
+    setSvgLeft(left);
     setLines(measureContainer(content, container));
-  }, []);
+  }, [edgeToEdge]);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -232,7 +244,7 @@ function AnimatedTypographyBeams({
           className="pointer-events-none absolute right-0 typography-label-4 text-[7px] font-semibold whitespace-nowrap text-white"
           style={{
             top: beam.y - 16,
-            color: beam.trackProps.pathColor,
+            color: beam.trackProps.pathColor ?? pathColor,
           }}
         >
           {beam.label}
@@ -240,7 +252,12 @@ function AnimatedTypographyBeams({
       ))}
 
       <svg
-        style={{ position: "absolute", top: 0, left: 0, pointerEvents: "none" }}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: svgLeft,
+          pointerEvents: "none",
+        }}
         width={svgSize.width}
         height={svgSize.height}
         viewBox={`0 0 ${svgSize.width} ${svgSize.height}`}
@@ -261,6 +278,7 @@ function AnimatedTypographyBeams({
               id={beam.id}
               pathWidth={pathWidth}
               pathOpacity={pathOpacity}
+              pathColor={pathColor}
               {...beam.trackProps}
             />
           );
@@ -274,6 +292,8 @@ function AnimatedTypographyBeams({
               reverse={reverse}
               delay={delay}
               duration={getDuration(beam.key)}
+              gradientStartColor={gradientStartColor}
+              gradientStopColor={gradientStopColor}
               {...beam.trackProps}
             />
           ))}
