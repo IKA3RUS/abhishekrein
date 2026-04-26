@@ -1,13 +1,13 @@
-import { formatForDisplay, useHotkey } from "@tanstack/react-hotkeys";
+import { useHotkey } from "@tanstack/react-hotkeys";
 
 import {
   Button,
-  ButtonKbd,
-  ButtonKbdGroup,
+  ButtonHotkey,
   ButtonLabel,
   ButtonLeadingIcon,
   ButtonTrailingIcon,
-} from "@/components/Button";
+} from "@/components/primitives/Button";
+
 import { useClipboard } from "@/hooks/useClipboard";
 
 import CopyAllIcon from "@material-symbols/svg-700/sharp/copy_all-fill.svg?react";
@@ -34,11 +34,7 @@ function EmailButton({ ...props }) {
       <ButtonTrailingIcon>
         {!isCopied ? <CopyAllIcon /> : <LibraryAddCheckIcon />}
       </ButtonTrailingIcon>
-      <ButtonKbdGroup>
-        {[...formatForDisplay(copyEmailHotkey)].filter((char) => char.trim()).map((char, i) => (
-          <ButtonKbd key={i}>{char}</ButtonKbd>
-        ))}
-      </ButtonKbdGroup>
+      <ButtonHotkey keys={copyEmailHotkey} />
     </Button>
   );
 }
