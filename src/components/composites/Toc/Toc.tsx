@@ -21,14 +21,13 @@ import { type Toc as TocData } from "@/lib/remark-extract-toc";
 import ChevronLineUpIcon from "@material-symbols/svg-700/sharp/chevron_line_up-fill.svg?react";
 import TocIcon from "@material-symbols/svg-700/sharp/toc-fill.svg?react";
 
-const HEADER_OFFSET = 120;
 const PREV_HOTKEY = "Shift+ArrowUp";
 const NEXT_HOTKEY = "Shift+ArrowDown";
 
 function scrollToId(id: string) {
   const el = document.getElementById(id);
   if (!el) return;
-  const top = el.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET;
+  const top = el.getBoundingClientRect().top + window.scrollY;
   window.scrollTo({ top, behavior: "smooth" });
 }
 
@@ -194,6 +193,17 @@ function TocPanel({
             <motion.a
               key="collapsed"
               href={activeEntry?.href ?? "#"}
+              onClick={(e) => {
+                e.preventDefault();
+
+                if (!activeEntry) return;
+
+                if (activeEntry.href === "#") {
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                } else {
+                  scrollToId(activeEntry.href.slice(1));
+                }
+              }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, transition: { duration: 0.1 } }}
               exit={{ opacity: 0 }}
@@ -216,6 +226,15 @@ function TocPanel({
                 >
                   <a
                     href={section === "context" ? "#" : `#${section}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+
+                      if (section === "context") {
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      } else {
+                        scrollToId(section);
+                      }
+                    }}
                     className="typography-label-3 tracking-widest text-neutral-9 uppercase transition-[color] hover:text-violet-7 xl:typography-label-4"
                   >
                     {section}
@@ -232,6 +251,10 @@ function TocPanel({
                         >
                           <a
                             href={`#${id}`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              scrollToId(id);
+                            }}
                             className="typography-text-2 text-neutral-11 transition-[color] hover:text-violet-7 xl:typography-text-3 2xl:typography-text-2"
                           >
                             {text}
@@ -284,7 +307,7 @@ function TocControls({
     if (navIndex >= 0) {
       const el = document.getElementById(navIds[navIndex]);
       const atStart =
-        !el || el.getBoundingClientRect().top >= HEADER_OFFSET - 5;
+        !el || el.getBoundingClientRect().top >= -5;
       if (!atStart) {
         scrollToId(navIds[navIndex]);
         return;
@@ -367,7 +390,7 @@ function Toc({ toc, className }: { toc: TocData; className?: string }) {
       for (const id of allIds) {
         const el = document.getElementById(id);
         if (!el) continue;
-        if (el.getBoundingClientRect().top <= HEADER_OFFSET) active = id;
+        if (el.getBoundingClientRect().top <= 0) active = id;
       }
       if (active) setActiveId(active);
     };
