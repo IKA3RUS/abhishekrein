@@ -241,7 +241,7 @@ function AnimatedTypographyBeams({
       {allBeams.map((beam) => (
         <span
           key={beam.key}
-          className="pointer-events-none absolute right-0 typography-label-4 text-[7px] font-semibold whitespace-nowrap text-white"
+          className="pointer-events-none absolute right-0 z-0 typography-label-4 text-[7px] font-semibold whitespace-nowrap text-white"
           style={{
             top: beam.y - 16,
             color: beam.trackProps.pathColor ?? pathColor,
