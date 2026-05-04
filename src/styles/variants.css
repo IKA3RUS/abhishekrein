@@ -1,1 +1,12 @@
 @custom-variant pointer-fine (@media (pointer: fine));
+
+@custom-variant h-sm (@media (min-height >= 480px));
+@custom-variant max-h-sm (@media (max-height < 480px));
+@custom-variant h-md (@media (min-height >= 640px));
+@custom-variant max-h-md (@media (max-height < 640px));
+@custom-variant h-lg (@media (min-height >= 768px));
+@custom-variant max-h-lg (@media (max-height < 768px));
+@custom-variant h-xl (@media (min-height >= 960px));
+@custom-variant max-h-xl (@media (max-height < 960px));
+@custom-variant h-2xl (@media (min-height >= 1080px));
+@custom-variant max-h-2xl (@media (max-height < 1080px));
