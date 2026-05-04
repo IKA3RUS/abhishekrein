@@ -1,0 +1,42 @@
+{
+  "title": "Machine learning to recognise endangered birds",
+  "description": "An auditory machine learning platform for forest rangers in remote India to identify indigenous, migratory, and endangered bird species by sound — using any smartphone, with or without an internet connection.",
+  "year": 2022,
+  "cover": {
+    "type": "video",
+    "filename": "cover.mp4"
+  },
+  "organizations": [
+    {
+      "name": "HCI International 2022",
+      "websiteUrl": "https://2022.hci.international/"
+    },
+    {
+      "name": "Springer Nature",
+      "websiteUrl": "https://doi.org/10.1007/978-3-031-19682-9_86"
+    }
+  ],
+  "team": [
+    {
+      "role": "Researcher",
+      "members": [
+        {
+          "name": "Abhishek Rein",
+          "websiteUrl": "https://abhishekrein.xyz",
+          "linkedinUrl": "https://www.linkedin.com/in/ika3rus/"
+        },
+        { "name": "Abhinav Rai" },
+        { "name": "Nilima Jaiswal" }
+      ]
+    },
+    {
+      "role": "Faculty Advisor",
+      "members": [{ "name": "Anmol Srivastava" }]
+    }
+  ],
+  "toolbox": ["React", "p5.js", "TensorFlow", "Teachable Machine"],
+  "tags": ["paper", "machinelearning", "burb"],
+  "workUrl": "https://doi.org/10.1007/978-3-031-19682-9_86",
+  "readingMinutes": 6,
+  "color": "#000000"
+}
