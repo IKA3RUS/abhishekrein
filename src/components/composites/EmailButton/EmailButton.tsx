@@ -1,5 +1,3 @@
-import { useHotkey } from "@tanstack/react-hotkeys";
-
 import {
   Button,
   ButtonHotkey,
@@ -23,10 +21,8 @@ function EmailButton({ ...props }) {
 
   const copyEmailHotkey = "Shift+W";
 
-  useHotkey(copyEmailHotkey, handleCopy);
-
   return (
-    <Button onMouseUp={handleCopy} onTouchEnd={handleCopy} {...props}>
+    <Button onClick={handleCopy} {...props}>
       <ButtonLeadingIcon>
         <MailIcon />
       </ButtonLeadingIcon>

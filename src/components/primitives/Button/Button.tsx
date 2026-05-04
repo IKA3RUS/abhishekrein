@@ -1,4 +1,4 @@
-import { type HTMLAttributes } from "react";
+import { type HTMLAttributes, createContext, useCallback, useContext, useRef } from "react";
 
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { type VariantProps, cva } from "class-variance-authority";
@@ -6,6 +6,12 @@ import { type VariantProps, cva } from "class-variance-authority";
 import { Hotkey } from "@/components/composites/Hotkey";
 
 import { cn } from "@/lib/cn";
+
+type ButtonContextValue = { trigger: () => void; disabled: boolean };
+const ButtonContext = createContext<ButtonContextValue>({
+  trigger: () => {},
+  disabled: false,
+});
 
 const buttonVariants = cva(
   "group/button relative inline-flex shrink-0 cursor-pointer items-center justify-center whitespace-nowrap uppercase outline-none select-none disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
@@ -35,23 +41,31 @@ function Button({
   className,
   variant = "primary",
   size = "regular",
+  disabled,
   children,
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+  const ref = useRef<HTMLButtonElement>(null);
+  const trigger = useCallback(() => ref.current?.click(), []);
+
   return (
-    <ButtonPrimitive
-      data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
-    >
-      {children}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div
-          data-slot="sweep"
-          className="absolute inset-0 size-full translate-y-full transition-[translate] duration-100 ease-in-out group-active/button:translate-y-0"
-        />
-      </div>
-    </ButtonPrimitive>
+    <ButtonContext.Provider value={{ trigger, disabled: !!disabled }}>
+      <ButtonPrimitive
+        ref={ref}
+        data-slot="button"
+        disabled={disabled}
+        className={cn(buttonVariants({ variant, size, className }))}
+        {...props}
+      >
+        {children}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div
+            data-slot="sweep"
+            className="absolute inset-0 size-full translate-y-full transition-[translate] duration-100 ease-in-out group-active/button:translate-y-0"
+          />
+        </div>
+      </ButtonPrimitive>
+    </ButtonContext.Provider>
   );
 }
 
@@ -85,8 +99,10 @@ function ButtonHotkey({
   className,
   ...props
 }: React.ComponentProps<typeof Hotkey>) {
+  const { trigger, disabled } = useContext(ButtonContext);
   return (
     <Hotkey
+      onActivate={disabled ? undefined : trigger}
       className={cn("absolute right-0 -bottom-8", className)}
       {...props}
     />
