@@ -1,6 +1,10 @@
+import { useRef } from "react";
+
 import { Video } from "@/components/primitives/Video";
 
 import { EmailButton } from "@/components/composites/EmailButton";
+
+import { Glitch } from "@/components/effects/Glitch";
 
 import AttributionIcon from "@material-symbols/svg-700/sharp/attribution-fill.svg?react";
 import TrendingFlatIcon from "@material-symbols/svg-700/sharp/trending_flat-fill.svg?react";
@@ -8,11 +12,15 @@ import TrendingFlatIcon from "@material-symbols/svg-700/sharp/trending_flat-fill
 import Logo from "@/assets/common/logos/ika3rus-logo.svg?react";
 import LinkedinLogo from "@/assets/common/logos/linkedin-logo.svg?react";
 import XLogo from "@/assets/common/logos/x-logo.svg?react";
+import Pdf417Micrographic from "@/assets/micrographics/pdf417.svg?react";
+import PsychologyMicrographic from "@/assets/micrographics/psychology.svg?react";
 
 const X_URL = "https://x.com/ika3rus";
 const LINKEDIN_URL = "https://www.linkedin.com/in/ika3rus/";
 
 function Footer() {
+  const footerRef = useRef<HTMLElement>(null);
+
   const socials = [
     {
       name: "X",
@@ -27,13 +35,13 @@ function Footer() {
   ];
 
   return (
-    <footer className="sticky bottom-0 w-full bg-black">
-      <div className="relative mx-auto flex max-w-480 flex-col">
+    <footer ref={footerRef} className="sticky bottom-0 w-full bg-black">
+      <div className="relative mx-auto flex max-w-480 flex-col overflow-hidden">
         <div className="relative z-1 flex size-full flex-col justify-between gap-20 p-9 sm:p-20 lg:flex-row">
-          <div className="flex flex-col gap-20">
-            <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-20 lg:flex-row lg:gap-0">
+            <div className="relative flex flex-col gap-4">
               <p className="typography-head-3 text-white">abhishek rein</p>
-              <div className="w-fit typography-text-2 text-violet-5">
+              <div className="relative z-1 w-fit typography-text-2 text-violet-5">
                 <p>creates human-centered eye candy</p>
                 <p className="flex">
                   <span className="inline-flex grow">with</span>
@@ -47,7 +55,7 @@ function Footer() {
                 </p>
               </div>
             </div>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col justify-end gap-4 max-lg:items-end">
               <Logo className="size-8 fill-neutral-8" />
               <div className="typography-text-2 text-white">
                 <p>handcrafted with a disturbingly</p>
@@ -90,9 +98,19 @@ function Footer() {
           className="absolute inset-0 size-full object-cover"
           src="/videos/common/evolution/evolution.m3u8"
         />
+        <span className="absolute top-48 right-9 sm:top-52 sm:right-20 md:top-38 md:right-auto md:left-108">
+          <Glitch container={footerRef}>
+            <Pdf417Micrographic className="h-12 w-fit" />
+          </Glitch>
+        </span>
+        <span className="absolute right-9 bottom-18 sm:right-18 sm:bottom-21">
+          <Glitch container={footerRef}>
+            <PsychologyMicrographic className="h-6 w-fit" />
+          </Glitch>
+        </span>
       </div>
-      <div className="border-t border-neutral-9">
-        <div className="z-1 mx-auto flex w-full max-w-480 items-center gap-2 bg-violet-7 px-9 py-4 sm:px-20 sm:py-2">
+      <div className="border-t border-neutral-9 bg-black">
+        <div className="z-1 mx-auto flex w-full max-w-480 items-center gap-2 px-9 py-4 sm:px-20 sm:py-2">
           <AttributionIcon className="size-3 fill-violet-5" />
           <a
             className="typography-text-4 font-semibold text-violet-5"
