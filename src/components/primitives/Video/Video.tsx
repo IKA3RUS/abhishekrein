@@ -61,7 +61,6 @@ function Video({
 
   return (
     <video
-      className="bg-black"
       ref={videoRef}
       preload={lazy ? "none" : "auto"}
       loop={loop}
