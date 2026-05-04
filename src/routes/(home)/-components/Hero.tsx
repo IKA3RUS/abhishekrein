@@ -28,11 +28,20 @@ function Hero() {
         </span>
       </AnimatedTypographyBeams>
       <div className="z-1 flex flex-col gap-0 typography-text-2 text-neutral-11 transition-[margin-left,gap] md:-ml-34 md:gap-4 md:typography-text-1">
-        <span className="">I create human-centered eye-candy</span>
+        <div className="relative z-1 w-full">
+          <p>creates human-centered eye candy</p>
+          <p className="flex">
+            <span className="inline-flex grow">with</span>
+            <span>structured thinking</span>
+          </p>
+          <p className="flex">
+            <span className="inline-flex grow">for multi-dimensional</span>
+            <span>problems.</span>
+          </p>
+        </div>
         <span className="">アビシェク レイン</span>
         <EmailButton className="mt-8 md:mt-2" />
       </div>
-      <PostFormCreativityMicrographic className="absolute top-4 left-4 z-1" />
       <AscentFallIka3rusMicrographic className="absolute right-4 bottom-4 z-1" />
     </section>
   );
