@@ -73,7 +73,7 @@ function RevealChipTrigger({
       data-slot="reveal-chip-trigger"
       data-size={size ?? "default"}
       openOnHover
-      delay={0}
+      delay={100}
       className={cn(revealChipTriggerVariants({ size }), className)}
       {...props}
     >
