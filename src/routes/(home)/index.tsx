@@ -6,7 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Header, HeaderAction, HeaderLogo } from "@/components/layout/Header";
 
 import { Hero } from "./-components/Hero";
-import { Works } from "./-components/Works";
+import { Work } from "./-components/Work";
 
 export const Route = createFileRoute("/(home)/")({ component: App });
 
@@ -19,9 +19,9 @@ function App() {
           <EmailButton />
         </HeaderAction>
       </Header>
-      <div className="relative z-1 bg-white">
+      <div className="relative z-1 bg-white pb-28">
         <Hero />
-        <Works />
+        <Work />
       </div>
       <Footer />
     </>
