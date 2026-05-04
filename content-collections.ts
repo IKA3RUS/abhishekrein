@@ -3,44 +3,38 @@ import { mdxParse } from "safe-mdx/parse";
 import { z } from "zod";
 
 import { calculateReadingMinutes } from "@/lib/reading-time";
-import { extractToc } from "@/lib/remark-extract-toc";
+import { extractToc } from "@/lib/remark/remark-extract-toc";
+import { coverSchema } from "@/lib/schemas/cover";
+import { memberSchema } from "@/lib/schemas/member";
+import { organizationSchema } from "@/lib/schemas/organization";
 
-const works = defineCollection({
-  name: "works",
-  directory: "./src/data/works",
-  include: "*.mdx",
-  schema: z.object({
-    title: z.string(),
-    description: z.string(),
-    organizations: z.array(z.object({ name: z.string(), link: z.url() })),
-    year: z.number().int(),
-    team: z.array(
-      z.object({
-        role: z.string(),
-        members: z.array(
-          z.object({
-            name: z.string(),
-            website: z.url().optional(),
-            x: z.url().optional(),
-            linkedin: z.url().optional(),
-            github: z.url().optional(),
-          }),
-        ),
-      }),
-    ),
-    toolbox: z.array(z.string()),
-    tags: z.array(z.string()),
-    cover: z.object({
-      type: z.enum(["image", "video"]),
-      src: z.string(),
-      poster: z.string().optional(),
+const baseWorkSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  organizations: z.array(organizationSchema),
+  year: z.number().int(),
+  team: z.array(
+    z.object({
+      role: z.string(),
+      members: z.array(memberSchema),
     }),
-    color: z
-      .string()
-      .regex(
-        /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/,
-        "color must be a hex code",
-      ),
+  ),
+  toolbox: z.array(z.string()),
+  tags: z.array(z.string()),
+  cover: coverSchema,
+  color: z
+    .string()
+    .regex(
+      /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/,
+      "color must be a hex code",
+    ),
+});
+
+const detailedWorks = defineCollection({
+  name: "detailedWorks",
+  directory: "./src/data/work",
+  include: "*.mdx",
+  schema: baseWorkSchema.extend({
     content: z.string(),
   }),
   transform(doc) {
@@ -53,6 +47,17 @@ const works = defineCollection({
   },
 });
 
+const linkedWorks = defineCollection({
+  name: "linkedWorks",
+  directory: "./src/data/work",
+  include: "*.json",
+  parser: "json",
+  schema: baseWorkSchema.extend({
+    workUrl: z.url(),
+    readingMinutes: z.int(),
+  }),
+});
+
 export default defineConfig({
-  content: [works],
+  content: [detailedWorks, linkedWorks],
 });
