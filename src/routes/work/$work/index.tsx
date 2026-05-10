@@ -115,12 +115,17 @@ function Work() {
               gradientStopColor={`${work.color}00`}
             >
               <h1 className="relative z-1 my-0!">
-                <a href="#">{work.title}</a>
+                <a href="#">{work.title.toLowerCase()}</a>
               </h1>
             </AnimatedTypographyBeams>
             <SafeMdxRenderer
               mdast={work.contextMdast}
-              components={{ Section }}
+              components={{
+                a: (props: React.ComponentProps<"a">) => (
+                  <a {...props} target="_blank" rel="noopener noreferrer" />
+                ),
+                Section,
+              }}
             />
           </>
           <div className="not-prose flex w-full flex-col items-start justify-between gap-16 sm:-mt-6 md:flex-row md:items-end">
