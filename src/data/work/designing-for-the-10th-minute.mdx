@@ -1,0 +1,308 @@
+---
+title: Designing for the 10th minute
+description: how we built the systems and tools that let amazon and more
+  execute a quick commerce expansion across 100 indian cities
+organizations:
+  [
+    { name: "amazon now", websiteUrl: "https://www.amazon.in/tez/browse/home" },
+    { name: "more", websiteUrl: "https://www.more.in" },
+  ]
+year: 2026
+team:
+  [
+    {
+      role: "Product Designer",
+      members:
+        [
+          {
+            name: "Abhishek Rein",
+            websiteUrl: "https://abhishekrein.xyz",
+            x: "https://x.com/ika3rus",
+            linkedinUrl: "https://www.linkedin.com/in/ika3rus/",
+          },
+        ],
+    },
+    {
+      role: "Product Manager",
+      members:
+        [
+          {
+            name: "Partha J. Borah",
+            websiteUrl: "https://www.parthajb.com/",
+            linkedinUrl: "https://www.linkedin.com/in/partha-borah/",
+          },
+        ],
+    },
+    {
+      role: "Developer",
+      members:
+        [
+          {
+            name: "Karthik S.",
+            linkedinUrl: "https://www.linkedin.com/in/karthik-s-8a1429a4/",
+          },
+          {
+            name: "Adarsh C.",
+            linkedinUrl: "https://www.linkedin.com/in/adarsh-c-shekar-a752bb1a5/",
+          },
+          {
+            name: "Chalapathy V.",
+            linkedinUrl: "https://www.linkedin.com/in/chalapathyv/",
+          },
+        ],
+    },
+  ]
+toolbox: ["Figma", "Adobe Illustrator", "ExtendScript"]
+tags: ["quickcommerce", "systems", "pathfinding"]
+cover: { type: "video", filename: "cover.webm" }
+color: "#0779FF"
+---
+
+<Section id="context">
+
+In early 2026, [**amazon** announced the expansion of **amazon
+now**](https://www.aboutamazon.in/news/retail/amazon-now-india-ultra-fast-delivery)
+\- its quick commerce platform - to 100 cities across India as part of a ₹2,800
+crore investment in its operations network. The plan called for over 1,000
+darkstores.
+
+In cities where those couldn't be stood up fast enough, **more**'s 800
+supermarkets were the ready infrastructure. **amazon** holds a 49% stake in
+**more** and **more**'s supermarkets had been the backbone of **amazon fresh**'s
+time-slotted deliveries for years. This relationship had real operational
+history, but **amazon now** posed a new question: whether the same stores could
+operate at hyperlocal quick-commerce speed.
+
+**more** had to retrofit traditional supermarkets for sub-10-minute deliveries.
+That meant that every **more** supermarket had to: pick orders fast, keep
+inventory honest, and give managers complete visibility over and control of the
+floor. This study explores how we built the systems that let **amazon** and
+**more** execute that ambition.
+
+</Section>
+
+<Section id="RealResults™">
+
+<RealResults>
+  <RealResult
+    theme="fulfillment"
+    stat="99.8%"
+    title="order delivery rate"
+    description="across the first 8 weeks after launch"
+  />
+  <RealResult
+    theme="performance"
+    stat="12.91s"
+    title="average pick time"
+    description="per product QTY"
+  />
+  <RealResult
+    theme="volume"
+    stat="18K"
+    title="orders fulfilled"
+    description="across the first 8 weeks after launch"
+  />
+</RealResults>
+
+</Section>
+
+<Section id="process">
+
+## zero cognitive load <br /> at the shelf
+
+A picker navigating a live supermarket aisle has no attention to spare. The
+picker app was built around that constraint.
+
+Three primary states carry a picker through an order: waiting to accept, picking
+each item in sequence, and packing into bags for the rack. Quick commerce runs
+on the clock. The timer in every state gives pickers that same awareness.
+
+<Gallery columns="3">
+  <GalleryVideo
+    filename="picker-incoming-order-screen.webm"
+    alt="A picker interacting with the more picker app's incoming order screen"
+    align="none"
+    caption="Pickers have 30 secs to accept an order before it passes on to the next available picker"
+  />
+  <GalleryImage
+    filename="picker-scan-sku-screen.png"
+    alt="The more picker app's scan SKU screen"
+    caption="Pickers are guided to through each product via the shortest path possible"
+  />
+  <GalleryVideo
+    filename="picker-pack-and-rack-screen.webm"
+    alt="The more picker app's pack and rack SKU screen"
+    caption="Timers with visual and haptic feedback on every state of the
+    picking journey keep pickers aware"
+  />
+</Gallery>
+
+## the ground realities <br /> of real supermarkets
+
+A darkstore is a controlled environment. A supermarket is a public one, and
+public environments are messy. Customers moves a product to the wrong shelves.
+Sales happen while POS systems are offline. Barcodes gets scuffed by trolleys
+
+These realities of the floor are why the picker app was designed with escape
+hatches that let pickers resolve these situations without stalling.
+
+<Gallery columns="3">
+  <GalleryImage
+    filename="picker-issues-bottom-sheet-screen.png"
+    alt="The issues bottom sheet expanded on more picker app's pick screen"
+    caption="Press skip on any issue on the picking journey"
+  />
+  <GalleryImage
+    filename="picker-sku-list-bottom-sheet-screen.png"
+    alt="The SKU list bottom sheet expanded on more picker app's pick screen"
+    caption="The complete order, every status, one glance"
+  />
+  <GalleryImage
+    filename="picker-view-done-sku-screen.png"
+    alt="The more picker app's done SKU screen"
+    caption="Go back to any SKU for a second chance"
+  />
+</Gallery>
+
+## the only competition <br /> that matters
+
+Speed is a skill. Picking orders fast is a skill. Like all skills, it improves
+with feedback.
+
+Pickers receive detailed performance rankings after every order -
+but only against themselves. The leaderboard is personal by design. There's no
+intentional race as a hostile floor helps no one.
+
+<Gallery columns="4">
+  <GalleryImage
+    filename="picker-order-completed-fast-speed-screen.png"
+    alt="The more picker app's order complete screen for a fast pick"
+  />
+  <GalleryImage
+    filename="picker-order-completed-good-speed-screen.png"
+    alt="The more picker app's order complete screen for an average pick"
+  />
+  <GalleryImage
+    filename="picker-order-completed-average-speed-screen.png"
+    alt="The more picker app's order complete screen for an average pick"
+  />
+  <GalleryImage
+    filename="picker-order-completed-slow-speed-screen.png"
+    alt="The more picker app's order complete screen for a slow pick"
+  />
+</Gallery>
+
+## pathfinding & <br /> shelf expression
+
+Supermarkets are busy places. Navigating crowded aisles with split-second
+precision is genuinely difficult. High attrition in the sector means even
+muscle memory can't be taken for granted.
+
+I designed a signage system that gave pickers a reliable spatial grammar to
+work with. The system was designed to work for both pickers racing through
+aisles, and customers browsing at their own pace - in the same aisles.
+
+<Gallery columns="3">
+  <GalleryImage
+    filename="rack-marker.png"
+    alt="A rack marker signage from more's supermarket signage system"
+    caption="Rack markers have iconography and classes for customers, rack
+    numbers for pickers"
+  />
+  <GalleryImage
+    filename="shelf-marker.png"
+    alt="A shelf marker signage from more's supermarket signage system"
+    caption="Every shelf has a shelf marker with a unique code on the edge"
+  />
+  <GalleryImage
+    filename="signage-pov.jpg"
+    alt="Signages for racks and shelves installed across a more supermarket"
+    align="none"
+  />
+</Gallery>
+
+Recreating these manually for nearly 1,000 supermarkets - and again every time a
+planogram changed - was not going to be viable _(or fun)_. I built **more
+markermaker**, an Adobe Illustrator extension that generates complete,
+print-ready signage files for any **more** supermarket in seconds.
+
+<Gallery columns="1">
+  <GalleryVideo
+    filename="more-markermaker-screenrecord.webm"
+    alt="A screen recording of the more marker maker extension in Adobe
+    Illustrator"
+    caption="reeeaaltime!"
+  />
+</Gallery>
+
+## the (figurative) <br /> operating system
+
+Store managers and duty managers are pulled in every direction during quick
+commerce shifts - pickers raising issues, orders running late, the floor in
+constant motion.
+
+I designed **more os** as the (figurative) operating system for the supermarket,
+giving store managers and duty managers a live picture of every active order,
+every picker, and every open issue - from a single surface.
+
+<Gallery columns="1">
+  <GalleryImage filename="os-home-page.png" alt="The more OS app's home page" />
+  <GalleryImage
+    filename="os-order-details-page.png"
+    alt="The more OS app's order details page"
+  />
+</Gallery>
+
+## the doubtful accuracy <br /> of planograms
+
+Every system described above depends on one thing: knowing where a product
+actually is. Planograms give us that, when they're accurate.
+
+The same ground realities that slow pickers down also quietly corrupt
+planograms over time. A product gets shelved at the wrong location. The system
+never finds out.
+
+We built an inventory application that closes this loop at the earliest possible
+moment: when stock arrives at the storefront. Store staff scan and stow products
+as they land, using the same shelf signages pickers rely on. Staff scan and stow
+as products land, and any override updates the planogram automatically.
+
+<Gallery columns="3">
+  <GalleryImage
+    filename="inventory-home-screen.png"
+    alt="The more inventory app's home screen"
+  />
+  <GalleryImage
+    filename="inventory-scan-shelf-screen.png"
+    alt="The more inventory app's scan shelf screen"
+  />
+  <GalleryImage
+    filename="inventory-override-location-bottom-sheet-screen.png"
+    alt="The more inventory app's override location screen"
+  />
+</Gallery>
+
+</Section>
+
+<Section id="end">
+
+# reflections
+
+Quick commerce, at least in this incarnation, is a logistics
+problem dressed as a product problem. Most of our work here was invisible by
+design: the picker app's job was to disappear into the motion of the job, the
+signage to become spatial intuition, the planogram loop to run quietly in the
+background.
+
+> Every system is perfectly designed to get the results it gets.
+> --- W. Edwards Deming
+
+The system's resilience depended on people doing the right thing under time
+pressure. That's the part no interface fully solves. Everything in this project
+was an attempt to layer speed onto an environment designed for the opposite,
+without breaking what made the environment work in the first place. The apps,
+the signage, the tooling - coordination infrastructure. The 10 minutes customers
+experience is the visible surface of a much larger system, most of which has
+nothing to do with a screen.
+
+</Section>
