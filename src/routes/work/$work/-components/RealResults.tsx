@@ -11,13 +11,15 @@ export function RealResults({ children }: { children: React.ReactNode }) {
 export function RealResult({
   stat,
   theme,
-  children,
+  title,
+  description,
   before,
   after,
 }: {
   stat: string;
   theme: string;
-  children: React.ReactNode;
+  title: string;
+  description?: string;
   before?: string;
   after?: string;
 }) {
@@ -31,7 +33,12 @@ export function RealResult({
         <span>{number}</span>
         <span className="text-[2rem] font-black">{unit}</span>
       </p>
-      <p className="typography-text-2 text-neutral-11">{children}</p>
+      <p className="typography-text-2 text-neutral-11">{title}</p>
+      {description && (
+        <p className="-mt-3 flex items-center gap-1 typography-text-4 text-neutral-11 uppercase opacity-40">
+          {description}
+        </p>
+      )}
       {before && after && (
         <p className="flex items-center gap-1 typography-text-2 text-neutral-11 opacity-40">
           {before}
