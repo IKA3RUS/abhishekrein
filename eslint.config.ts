@@ -18,6 +18,13 @@ export default defineConfig([
   },
   tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
+  pluginReact.configs.flat["jsx-runtime"],
+  {
+    files: ["**/*.{ts,mts,cts,tsx}"],
+    rules: {
+      "react/no-unknown-property": "off",
+    },
+  },
   reactHooks.configs.flat.recommended,
   eslintConfigPrettier,
 ]);
