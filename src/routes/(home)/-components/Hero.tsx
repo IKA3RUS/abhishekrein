@@ -7,13 +7,16 @@ import { EmailButton } from "@/components/composites/EmailButton";
 import { AnimatedTypographyBeams } from "@/components/effects/AnimatedTypographyBeams";
 
 import AscentFallIka3rusMicrographic from "@/assets/home/ascent-fall-ika3rus.svg?react";
-import PostFormCreativityMicrographic from "@/assets/home/post-form-creativity.svg?react";
 
 const HeroScene = lazy(() => import("./HeroScene.client"));
 
 function Hero() {
   return (
-    <section className="relative flex h-dvh w-full flex-col items-center justify-center bg-[linear-gradient(to_bottom,var(--color-violet-9)_0%,var(--color-violet-7)_15%,var(--color-violet-7)_95%,var(--color-white)_100%)]">
+    <section className="relative flex h-dvh w-full flex-col items-center justify-center bg-violet-7">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[24%] bg-linear-to-b from-white/0 via-white via-30% to-white"
+      />
       <ClientOnly fallback={null}>
         <Suspense fallback={null}>
           <HeroScene />

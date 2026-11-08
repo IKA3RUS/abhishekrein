@@ -14,6 +14,8 @@ uniform float luminanceMethod;
 uniform float invertColor;
 uniform float pixelSizeRatio;
 uniform float grayscaleOnly;
+uniform float shade;
+uniform vec3 shadeColor;
 
 /**
  * Ordered dithering matrix lookup
@@ -68,6 +70,39 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor)
   float pixelSize = gridSize * pixelSizeRatio;
   vec2 pixelatedUV = floor(fragCoord / pixelSize) * pixelSize / resolution;
   baseColor = texture2D(inputBuffer, pixelatedUV).rgb;
+
+  // Shaded mode: dither on coverage, then tint thick cloud towards shadeColor.
+  // Clouds are drawn white and lights (sun, horizon) pure blue, so the red
+  // channel carries cloud density alone. Every output is a valid premultiplied
+  // colour, so HDR displays render it the same as everything else.
+  if (shade > 0.0) {
+    float coverage = texture2D(inputBuffer, pixelatedUV).a;
+    if (getValue(coverage * 3.0, fragCoord)) {
+      outputColor = vec4(0.0, 0.0, 0.0, coverage);
+      return;
+    }
+
+    // Any cloud gets a light tint, deeper with density. Puffs denser than
+    // their surroundings are pushed darker still, so each one reads as a
+    // shape whether it's in the thin upper layer or the dense bank below.
+    float cloud = smoothstep(0.0, 0.05, baseColor.r);
+    vec2 spread = vec2(20.0) / resolution;
+    float surroundings = (
+      texture2D(inputBuffer, pixelatedUV + vec2(spread.x, 0.0)).r +
+      texture2D(inputBuffer, pixelatedUV - vec2(spread.x, 0.0)).r +
+      texture2D(inputBuffer, pixelatedUV + vec2(0.0, spread.y)).r +
+      texture2D(inputBuffer, pixelatedUV - vec2(0.0, spread.y)).r
+    ) / 4.0;
+    float depth = clamp(
+      smoothstep(0.1, 0.9, baseColor.r) + (baseColor.r - surroundings) * 3.0,
+      0.0,
+      1.0
+    );
+    // Fade back to white along the bottom so the hero meets the page cleanly
+    float amount = cloud * mix(0.25, 1.0, depth) * smoothstep(0.05, 0.3, uv.y) * shade;
+    outputColor = vec4(mix(vec3(1.0), shadeColor, amount), 1.0);
+    return;
+  }
 
   // Calculate luminance for each pixel (original implementation)
   float luminance = dot(baseColor, vec3(1.,1.,1.));

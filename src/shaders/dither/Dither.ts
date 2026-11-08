@@ -1,7 +1,8 @@
+import { wrapEffect } from "@react-three/postprocessing";
 import { Effect } from "postprocessing";
 import * as THREE from "three";
+
 import ditherShader from "./DitherShader";
-import { wrapEffect } from "@react-three/postprocessing";
 
 /**
  * Interface for dithering effect options
@@ -14,6 +15,8 @@ interface DitherEffectOptions {
   invertColor?: boolean;
   pixelSizeRatio?: number;
   grayscaleOnly?: boolean;
+  shade?: number;
+  shadeColor?: THREE.ColorRepresentation;
 }
 
 /**
@@ -24,7 +27,7 @@ class DitherEffect extends Effect {
   /**
    * Map of uniforms used by the shader
    */
-  uniforms: Map<string, THREE.Uniform<number | THREE.Vector2>>;
+  uniforms: Map<string, THREE.Uniform<number | THREE.Vector2 | THREE.Color>>;
 
   /**
    * Creates a new dithering effect instance
@@ -38,9 +41,14 @@ class DitherEffect extends Effect {
     invertColor = false,
     pixelSizeRatio = 1,
     grayscaleOnly = false,
+    shade = 0,
+    shadeColor = "#000000",
   }: DitherEffectOptions = {}) {
     // Initialize uniforms with default values
-    const uniforms = new Map<string, THREE.Uniform<number | THREE.Vector2>>([
+    const uniforms = new Map<
+      string,
+      THREE.Uniform<number | THREE.Vector2 | THREE.Color>
+    >([
       ["time", new THREE.Uniform(time)],
       ["resolution", new THREE.Uniform(resolution)],
       ["gridSize", new THREE.Uniform(gridSize)],
@@ -49,6 +57,8 @@ class DitherEffect extends Effect {
       ["ditheringEnabled", new THREE.Uniform(1)], // Enabled by default
       ["pixelSizeRatio", new THREE.Uniform(pixelSizeRatio)],
       ["grayscaleOnly", new THREE.Uniform(grayscaleOnly ? 1 : 0)],
+      ["shade", new THREE.Uniform(shade)],
+      ["shadeColor", new THREE.Uniform(new THREE.Color(shadeColor))],
     ]);
 
     super("DitheringEffect", ditherShader, {
