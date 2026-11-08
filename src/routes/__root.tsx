@@ -2,7 +2,9 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
-import globalsCss from "../styles/globals.css?url";
+import { DitherReveal } from "@/components/effects/DitherReveal";
+
+import globalsCss from "@/styles/globals.css?url";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -41,6 +43,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <main className="relative">{children}</main>
+        <DitherReveal />
         <TanStackDevtools
           config={{
             position: "bottom-right",

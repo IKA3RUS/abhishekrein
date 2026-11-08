@@ -1,0 +1,58 @@
+/* Registers the cover amount as a number so it can animate. <DitherReveal /> reads it every frame. */
+@property --cover {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@theme {
+  --animate-uncover: uncover 1800ms cubic-bezier(0, 0.55, 0.45, 1) both;
+
+  @keyframes uncover {
+    from {
+      --cover: 1;
+    }
+  }
+}
+
+@keyframes reveal {
+  to {
+    --cover: 1;
+  }
+}
+
+::view-transition-image-pair(root) {
+  animation: reveal 1300ms cubic-bezier(0.45, 0, 0.55, 1) both;
+}
+
+::view-transition-old(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Hides the new page until <DitherReveal /> sets the first mask. */
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  mask-image: linear-gradient(transparent, transparent);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+}
+
+/* Keeps the live canvas above the snapshots. */
+::view-transition-group(dither-reveal),
+::view-transition-new(dither-reveal) {
+  animation: none;
+}
+
+::view-transition-old(dither-reveal) {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-image-pair(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}

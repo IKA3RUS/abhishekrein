@@ -8,6 +8,9 @@ export function getRouter() {
     scrollRestoration: true,
     defaultPreload: "viewport",
     defaultPreloadStaleTime: 0,
+    defaultViewTransition: {
+      types: ({ pathChanged }) => (pathChanged ? ["reveal"] : false),
+    },
   });
 
   return router;

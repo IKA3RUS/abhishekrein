@@ -5,6 +5,7 @@
 @import "./colors.css";
 @import "./typography.css";
 @import "./animations.css";
+@import "../components/effects/DitherReveal/DitherReveal.css";
 @import "./variants.css";
 
 html {
