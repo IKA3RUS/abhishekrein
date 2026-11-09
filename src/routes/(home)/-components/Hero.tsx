@@ -1,4 +1,4 @@
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useCallback, useState } from "react";
 
 import { ClientOnly } from "@tanstack/react-router";
 
@@ -11,15 +11,22 @@ import AscentFallIka3rusMicrographic from "@/assets/home/ascent-fall-ika3rus.svg
 const HeroScene = lazy(() => import("./HeroScene.client"));
 
 function Hero() {
+  const [sceneShown, setSceneShown] = useState(false);
+  const onSceneShown = useCallback(() => setSceneShown(true), []);
+
   return (
-    <section className="relative flex h-dvh w-full flex-col items-center justify-center bg-violet-7">
+    <section
+      // Holds the preloader until the clouds have faded in
+      data-preloader-hold={sceneShown ? undefined : ""}
+      className="relative flex h-dvh w-full flex-col items-center justify-center bg-violet-7"
+    >
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 bottom-0 h-[24%] bg-linear-to-b from-white/0 via-white via-30% to-white"
       />
       <ClientOnly fallback={null}>
         <Suspense fallback={null}>
-          <HeroScene />
+          <HeroScene onShown={onSceneShown} />
         </Suspense>
       </ClientOnly>
       <AnimatedTypographyBeams className="relative flex w-full flex-col items-center justify-center md:flex-row">

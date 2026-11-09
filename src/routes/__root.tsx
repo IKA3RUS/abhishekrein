@@ -3,6 +3,7 @@ import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
 import { DitherReveal } from "@/components/effects/DitherReveal";
+import { PreloaderScript } from "@/components/effects/Preloader";
 
 import globalsCss from "@/styles/globals.css?url";
 
@@ -37,8 +38,10 @@ export const Route = createRootRoute({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    // PreloaderScript sets data-preloader-* attributes before hydration
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <PreloaderScript />
         <HeadContent />
       </head>
       <body>

@@ -1,3 +1,5 @@
+const MAX_PRELOADER_HOLD = 30000; // Counts from hydration.
+
 const TRANSITION_PSEUDO = "::view-transition-image-pair(root)";
 
 /** Converts a CSS color token to linear 0–1 RGB. */
@@ -27,9 +29,32 @@ function findViewTransition() {
     );
 }
 
+/** Resolves once no element has data-preloader-hold, or after MAX_PRELOADER_HOLD. Pages render the attribute until they are ready. */
+function waitForPreloaderHolds() {
+  return new Promise<void>((resolve) => {
+    const finish = () => {
+      observer.disconnect();
+      clearTimeout(timeout);
+      resolve();
+    };
+    const check = () => {
+      if (!document.querySelector("[data-preloader-hold]")) finish();
+    };
+    const observer = new MutationObserver(check);
+    observer.observe(document.body, {
+      subtree: true,
+      childList: true,
+      attributeFilter: ["data-preloader-hold"],
+    });
+    const timeout = setTimeout(finish, MAX_PRELOADER_HOLD);
+    check();
+  });
+}
+
 export {
   TRANSITION_PSEUDO,
   findViewTransition,
   readCover,
   resolveColor,
+  waitForPreloaderHolds,
 };

@@ -12,7 +12,9 @@ interface HeaderContextValue {
   variant: HeaderVariant;
 }
 
-const HeaderContext = createContext<HeaderContextValue>({ variant: "expanded" });
+const HeaderContext = createContext<HeaderContextValue>({
+  variant: "expanded",
+});
 
 function useHeader() {
   return useContext(HeaderContext);
@@ -86,6 +88,7 @@ function HeaderLogo({ className }: { className?: string }) {
   return (
     <Link to="/">
       <Logo
+        data-preloader-target
         className={cn(
           "pointer-events-auto fill-white transition-transform duration-150 ease-in-out",
           variant === "collapsed" && "translate-x-[calc(50cqw-50%)]",
@@ -109,7 +112,9 @@ function HeaderNavigation({
     <div
       className={cn(
         "pointer-events-auto ml-4 hidden gap-4 transition-all duration-100 ease-in sm:flex",
-        variant === "expanded" ? "opacity-100" : "pointer-events-none opacity-0",
+        variant === "expanded"
+          ? "opacity-100"
+          : "pointer-events-none opacity-0",
         className,
       )}
     >
@@ -131,7 +136,9 @@ function HeaderAction({
     <div
       className={cn(
         "pointer-events-auto ml-auto hidden gap-4 transition-all duration-100 ease-out sm:flex",
-        variant === "expanded" ? "opacity-100" : "pointer-events-none opacity-0",
+        variant === "expanded"
+          ? "opacity-100"
+          : "pointer-events-none opacity-0",
         className,
       )}
     >

@@ -30,6 +30,8 @@ import {
   Vector3,
 } from "three";
 
+import { CLOUD_URL } from "./texture";
+
 function setUpdateRange(
   attr: BufferAttribute & {
     addUpdateRange?: (start: number, count: number) => void;
@@ -50,8 +52,6 @@ declare module "@react-three/fiber" {
     cloudMaterial: ThreeElement<typeof MeshLambertMaterial>;
   }
 }
-
-const CLOUD_URL = "/images/home/cloud.png";
 
 type CloudState = {
   uuid: string;
