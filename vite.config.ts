@@ -49,6 +49,12 @@ const config = defineConfig({
       output: {
         codeSplitting: {
           groups: [
+            // Keeps React and Vite's preload helper out of the groups below, which also capture their dependencies.
+            {
+              name: "core",
+              test: /node_modules[\\/](react|react-dom|scheduler|use-sync-external-store)[\\/]|vite\/preload-helper/,
+              priority: 1,
+            },
             {
               name: "mdx",
               test: /node_modules[\\/](safe-mdx|micromark|acorn|mdast|htmlparser2|linkedom|cssom|entities)/,

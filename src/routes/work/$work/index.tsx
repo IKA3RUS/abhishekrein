@@ -41,6 +41,8 @@ function findWork(slug: string) {
 }
 
 export const Route = createFileRoute("/work/$work/")({
+  // Splits the loader so the MDX parser stays out of the main bundle
+  codeSplitGroupings: [["loader"], ["component"]],
   loader: ({ params: { work: slug } }) => {
     const work = findWork(slug);
     const mdast = mdxParse(work.content);
