@@ -7,7 +7,7 @@ import { allDetailedWorks } from "content-collections";
 import { SafeMdxRenderer } from "safe-mdx";
 import { mdxParse } from "safe-mdx/parse";
 
-import { Video } from "@/components/primitives/Video";
+import { DeferredVideo } from "@/components/primitives/Video";
 
 import { EmailButton } from "@/components/composites/EmailButton";
 import { OrganizationLogo } from "@/components/composites/OrganizationLogo";
@@ -150,7 +150,7 @@ function Work() {
               />
             )}
             {work.cover.type === "video" && (
-              <Video
+              <DeferredVideo
                 src={`/videos/work/${noCase(work._meta.path)}/${work.cover.filename}`}
                 className="aspect-video w-full object-cover"
                 lazy={false}

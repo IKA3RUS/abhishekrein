@@ -2,6 +2,7 @@ import { type RefObject, useEffect, useState } from "react";
 
 import {
   type PreloaderHandle,
+  markPreloaderDone,
   preloaderSeen,
 } from "@/components/effects/Preloader";
 
@@ -88,6 +89,10 @@ function usePreloader({
       cancelled = true;
     };
   }, [landing, preloaderRef]);
+
+  useEffect(() => {
+    if (cover === "done") markPreloaderDone();
+  }, [cover]);
 
   const preloader =
     landing === "landing" ? "landing" : landing === "landed" ? "done" : cover;

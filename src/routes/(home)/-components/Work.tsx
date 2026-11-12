@@ -12,10 +12,12 @@ import {
   ButtonLabel,
   ButtonTrailingIcon,
 } from "@/components/primitives/Button";
-import { Video } from "@/components/primitives/Video";
+import { DeferredVideo } from "@/components/primitives/Video";
 
 import { OrganizationLogo } from "@/components/composites/OrganizationLogo";
 import { ReadingMinutesChip } from "@/components/composites/ReadingMinutesChip";
+
+import { usePreloaderDone } from "@/components/effects/Preloader";
 
 import ArrowOutwardIcon from "@material-symbols/svg-700/sharp/arrow_outward-fill.svg?react";
 import Book5Icon from "@material-symbols/svg-700/sharp/book_5-fill.svg?react";
@@ -33,6 +35,7 @@ function WorkCard({
   index: number;
 }) {
   const navigate = useNavigate();
+  const preloaderDone = usePreloaderDone();
   const linked = isLinkedWork(work);
   function handleButtonClick() {
     if (linked) {
@@ -61,6 +64,8 @@ function WorkCard({
         <Link
           to="/work/$work"
           params={{ work: work._meta.path }}
+          // Waits for the preloader to finish before preloading the work page, because it needs the bandwidth.
+          preload={preloaderDone ? undefined : false}
           aria-label={work.title}
           tabIndex={-1}
           draggable={false}
@@ -76,7 +81,7 @@ function WorkCard({
           />
         )}
         {work.cover.type === "video" && (
-          <Video
+          <DeferredVideo
             src={`/videos/work/${noCase(work._meta.path)}/${work.cover.filename}`}
             className="size-full object-cover"
             lazy={false}

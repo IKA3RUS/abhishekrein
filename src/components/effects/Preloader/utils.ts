@@ -78,6 +78,17 @@ function markPreloaderSeen() {
   }
 }
 
+let resolvePreloaderDone = () => {};
+
+/** Resolves once the preloader finishes or is skipped. */
+const preloaderDone = new Promise<void>((resolve) => {
+  resolvePreloaderDone = resolve;
+});
+
+function markPreloaderDone() {
+  resolvePreloaderDone();
+}
+
 function preloaderSeen() {
   return document.documentElement.hasAttribute("data-preloader-seen");
 }
@@ -86,7 +97,9 @@ export {
   aimExit,
   cssAnimationsFinished,
   figureRoot,
+  preloaderDone,
   preloaderSeen,
+  markPreloaderDone,
   markPreloaderSeen,
   watchPreloaderFigure,
 };

@@ -1,6 +1,6 @@
 import { type VariantProps, cva } from "class-variance-authority";
 
-import { Video } from "@/components/primitives/Video";
+import { DeferredVideo } from "@/components/primitives/Video";
 
 import { CursorSway } from "@/components/effects/CursorSway";
 
@@ -196,7 +196,7 @@ export function GalleryVideo({
         className={mediaContainerVariants(variants)}
         style={{ backgroundColor: backgroundColor ?? "var(--color-neutral-1)" }}
       >
-        <Video
+        <DeferredVideo
           src={basepath + filename}
           aria-label={alt || "A video of a piece of work in this project"}
           width={width}

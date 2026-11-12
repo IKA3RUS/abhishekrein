@@ -9,6 +9,8 @@ interface VideoProps extends React.VideoHTMLAttributes<HTMLVideoElement> {
   lazy?: boolean;
   lazyThresholdPx?: number;
   loop?: boolean;
+  /** Holds off loading while true. */
+  deferred?: boolean;
 }
 
 function Video({
@@ -16,6 +18,7 @@ function Video({
   lazy = true,
   lazyThresholdPx = 300,
   loop = true,
+  deferred = false,
   ...props
 }: VideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -31,7 +34,7 @@ function Video({
     const video = videoRef.current;
     if (!video) return;
     if (video.src || hlsRef.current) return;
-    if (lazy && !inView) return;
+    if (deferred || (lazy && !inView)) return;
 
     if (isHls) {
       if (Hls.isSupported()) {
@@ -57,7 +60,7 @@ function Video({
       hlsRef.current?.destroy();
       hlsRef.current = null;
     };
-  }, [inView, src, lazy, isHls]);
+  }, [deferred, inView, src, lazy, isHls]);
 
   return (
     <video

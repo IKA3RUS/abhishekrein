@@ -1,6 +1,6 @@
 import { useRef } from "react";
 
-import { Video } from "@/components/primitives/Video";
+import { DeferredVideo } from "@/components/primitives/Video";
 
 import { EmailButton } from "@/components/composites/EmailButton";
 
@@ -94,7 +94,7 @@ function Footer() {
             </p>
           </div>
         </div>
-        <Video
+        <DeferredVideo
           className="absolute inset-0 size-full object-cover"
           src="/videos/common/evolution/evolution.m3u8"
         />
