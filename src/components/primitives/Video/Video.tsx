@@ -1,10 +1,11 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useImperativeHandle, useRef } from "react";
 
 import Hls from "hls.js";
 
 import { useInView } from "@/hooks/useInView";
 
 interface VideoProps extends React.VideoHTMLAttributes<HTMLVideoElement> {
+  ref?: React.Ref<HTMLVideoElement>;
   src: string;
   lazy?: boolean;
   lazyThresholdPx?: number;
@@ -14,6 +15,7 @@ interface VideoProps extends React.VideoHTMLAttributes<HTMLVideoElement> {
 }
 
 function Video({
+  ref,
   src,
   lazy = true,
   lazyThresholdPx = 300,
@@ -23,6 +25,7 @@ function Video({
 }: VideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
+  useImperativeHandle(ref, () => videoRef.current!, []);
   const inView = useInView(videoRef, {
     margin: `${lazyThresholdPx}px`,
     once: true,
