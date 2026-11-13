@@ -2,11 +2,18 @@ import { useEffect } from "react";
 
 import { useRouter } from "@tanstack/react-router";
 
+import { usePreloaderDone } from "@/components/effects/Preloader";
+
+import { type Playback, useSound } from "@/hooks/useSound";
+
+import { SOUNDS, VOLUME } from "../sounds";
 import { TRANSITION_PSEUDO, findViewTransition, readCover } from "../utils";
 import type { RevealControls } from "./useReveal";
 
 const MAX_IGNITION_FRAMES = 600; // Ignition frame limit for a navigation that never starts a view transition.
 const CLICK_WINDOW = 1000; // Maximum interval in ms between a press and navigation for the press to set the origin.
+const SMOULDER_IN = 0.15; // Fade-in in seconds, which masks the discontinuity of a random loop offset.
+const SMOULDER_OUT = 0.9; // Fade-out in seconds under the burn, matched to the onset of burn.mp3 at about 0.7s.
 
 /** Resolves the burn origin in CSS px: the recent press, else the centre of the focused anchor, else the viewport centre. */
 function navigationOrigin(press: { x: number; y: number; time: number }) {
@@ -26,6 +33,11 @@ function useRouteReveal({
   follow,
 }: Pick<RevealControls, "getReveal" | "getMask" | "follow">) {
   const router = useRouter();
+  // Defers fetching until the preloader completes, to avoid contending for bandwidth.
+  const { play } = useSound(SOUNDS, {
+    volume: VOLUME,
+    preload: usePreloaderDone(),
+  });
 
   useEffect(() => {
     const press = { x: 0, y: 0, time: -Infinity };
@@ -37,6 +49,7 @@ function useRouteReveal({
     window.addEventListener("pointerdown", onPointerDown, { capture: true });
 
     let navigation = 0;
+    let smoulder: Playback | null = null;
 
     const unsubscribe = router.subscribe("onBeforeLoad", ({ pathChanged }) => {
       if (!pathChanged) return;
@@ -57,6 +70,13 @@ function useRouteReveal({
         renderer.ignite(origin.x, origin.y);
       }
       const current = ++navigation;
+      smoulder?.stop(0.1);
+      play("ignite");
+      smoulder = play("smoulder", {
+        loop: true,
+        fadeIn: SMOULDER_IN,
+        offset: "random",
+      });
 
       // Polls because the view transition starts only once the next route loads.
       let attempts = 0;
@@ -69,9 +89,13 @@ function useRouteReveal({
             requestAnimationFrame(waitForTransition);
           } else {
             reveal.clear();
+            smoulder?.stop(0.3);
           }
           return;
         }
+
+        play("burn");
+        smoulder?.stop(SMOULDER_OUT);
 
         // Alternates two mask layers so a data URL that is still decoding never leaves the new page unmasked.
         let layer = 0;
@@ -95,11 +119,12 @@ function useRouteReveal({
 
     return () => {
       unsubscribe();
+      smoulder?.stop(0.3);
       window.removeEventListener("pointerdown", onPointerDown, {
         capture: true,
       });
     };
-  }, [router, follow, getReveal, getMask]);
+  }, [router, play, follow, getReveal, getMask]);
 }
 
 export { useRouteReveal };
