@@ -116,14 +116,15 @@ function WorkCard({
         </div>
         <ReadingMinutesChip minutes={work.readingMinutes} />
       </div>
+      {/* Pointer focus retains the pressed styles after release, so that the view transition snapshot captures their final state. */}
       <Button
-        className="relative z-10 *:data-[slot=label]:group-active/card:text-yellow-4 **:data-[slot=sweep]:group-active/card:translate-y-0 [&_svg]:group-active/card:fill-yellow-4"
+        className="relative z-10 *:data-[slot=label]:group-active/card:text-yellow-4 *:data-[slot=label]:group-has-[:focus:not(:focus-visible)]/card:text-yellow-4 **:data-[slot=sweep]:group-active/card:translate-y-0 **:data-[slot=sweep]:group-has-[:focus:not(:focus-visible)]/card:translate-y-0 **:data-[slot=sweep]:group-has-[:focus:not(:focus-visible)]/card:transition-none [&_svg]:group-active/card:fill-yellow-4 [&_svg]:group-has-[:focus:not(:focus-visible)]/card:fill-yellow-4"
         onClick={handleButtonClick}
       >
-        <ButtonLabel className="group-active/card:animate-vibrate group-active/card:animation-duration-[0.05s] group-active/card:[--vibrate-amplitude:2px]">
+        <ButtonLabel className="group-active/card:animate-vibrate group-active/card:animation-duration-[0.05s] group-active/card:[--vibrate-amplitude:2px] group-has-[:focus:not(:focus-visible)]/card:animate-vibrate group-has-[:focus:not(:focus-visible)]/card:animation-duration-[0.05s] group-has-[:focus:not(:focus-visible)]/card:[--vibrate-amplitude:2px]">
           Read
         </ButtonLabel>
-        <ButtonTrailingIcon className="[&>span>*]:group-active/card:animate-marquee-x [&>span>*]:group-active/card:animation-duration-[0.5s]">
+        <ButtonTrailingIcon className="[&>span>*]:group-active/card:animate-marquee-x [&>span>*]:group-active/card:animation-duration-[0.5s] [&>span>*]:group-has-[:focus:not(:focus-visible)]/card:animate-marquee-x [&>span>*]:group-has-[:focus:not(:focus-visible)]/card:animation-duration-[0.5s]">
           {linked ? <ArrowOutwardIcon /> : <Book5Icon />}
         </ButtonTrailingIcon>
         <ButtonHotkey keys={`Shift+${index + 1}`} />
