@@ -29,7 +29,7 @@ export function RealResult({
 
   return (
     <div className="group flex flex-col gap-4 bg-neutral-1 p-8 pt-6 first:bg-green-7">
-      <p className="flex items-start justify-start typography-display-4 leading-none font-medium text-neutral-11 group-first:text-white">
+      <p className="flex items-start justify-start typography-display-4 leading-none text-neutral-11 group-first:text-white">
         <span>{number}</span>
         <span className="text-[2rem] font-black">{unit}</span>
       </p>
