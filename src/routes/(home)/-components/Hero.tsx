@@ -30,10 +30,10 @@ function Hero() {
         </Suspense>
       </ClientOnly>
       <AnimatedTypographyBeams className="relative flex w-full flex-col items-center justify-center md:flex-row">
-        <span className="z-1 translate-y-1/3 typography-display-4 text-neutral-11 transition-[font-size] md:-translate-y-1/2 md:typography-display-3 xl:typography-display-2">
+        <span className="z-1 translate-y-1/3 typography-display-4 text-neutral-11 transition-[font-size] md:-translate-y-1/2 xl:typography-display-3">
           abhishek
         </span>
-        <span className="z-1 bg-violet-3/0 typography-display-4 text-neutral-11 md:typography-display-3 xl:typography-display-2">
+        <span className="z-1 bg-violet-3/0 typography-display-4 text-neutral-11 xl:typography-display-3">
           rein
         </span>
       </AnimatedTypographyBeams>
