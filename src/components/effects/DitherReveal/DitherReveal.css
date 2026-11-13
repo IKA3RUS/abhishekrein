@@ -15,14 +15,19 @@
   }
 }
 
+/* Holds --cover at 0 for the first 25% so that the ignition scorch develops before the burn begins. */
 @keyframes reveal {
+  25% {
+    --cover: 0;
+    animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+  }
   to {
     --cover: 1;
   }
 }
 
 ::view-transition-image-pair(root) {
-  animation: reveal 1300ms cubic-bezier(0.45, 0, 0.55, 1) both;
+  animation: reveal 2200ms linear both;
 }
 
 ::view-transition-old(root) {

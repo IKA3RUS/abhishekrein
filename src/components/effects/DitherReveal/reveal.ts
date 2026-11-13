@@ -42,19 +42,25 @@ function createReveal(canvas: HTMLCanvasElement, mode: Mode, scale = 1) {
   gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
 
   const uniforms = {
-    cover: gl.getUniformLocation(program, "cover"),
+    burn: gl.getUniformLocation(program, "burn"),
     time: gl.getUniformLocation(program, "time"),
     seed: gl.getUniformLocation(program, "seed"),
     scale: gl.getUniformLocation(program, "scale"),
     mode: gl.getUniformLocation(program, "mode"),
     fill: gl.getUniformLocation(program, "fill"),
     frontier: gl.getUniformLocation(program, "frontier"),
+    ember: gl.getUniformLocation(program, "ember"),
+    origin: gl.getUniformLocation(program, "origin"),
+    resolution: gl.getUniformLocation(program, "resolution"),
   };
+  let origin = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+  let start = 0;
 
   gl.uniform1f(uniforms.scale, scale);
   gl.uniform1f(uniforms.mode, MODES[mode]);
   gl.uniform3fv(uniforms.fill, resolveColor("--color-white"));
   gl.uniform3fv(uniforms.frontier, resolveColor("--color-yellow-4"));
+  gl.uniform3fv(uniforms.ember, resolveColor("--color-yellow-7"));
 
   return {
     setMode(next: Mode) {
@@ -63,7 +69,12 @@ function createReveal(canvas: HTMLCanvasElement, mode: Mode, scale = 1) {
     setSeed(seed: number) {
       gl.uniform1f(uniforms.seed, seed);
     },
-    draw(cover: number, time: number) {
+    /** Sets the burn origin in CSS px from the top left and resets the shader time base. */
+    ignite(x: number, y: number) {
+      origin = { x, y };
+      start = performance.now();
+    },
+    draw(burn: number, time: number) {
       const width = Math.ceil(window.innerWidth / (CELL * scale));
       const height = Math.ceil(window.innerHeight / (CELL * scale));
       if (canvas.width !== width || canvas.height !== height) {
@@ -74,8 +85,18 @@ function createReveal(canvas: HTMLCanvasElement, mode: Mode, scale = 1) {
 
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT);
-      gl.uniform1f(uniforms.cover, cover);
-      gl.uniform1f(uniforms.time, time / 1000);
+      gl.uniform2f(
+        uniforms.origin,
+        origin.x / CELL,
+        (window.innerHeight - origin.y) / CELL,
+      );
+      gl.uniform2f(
+        uniforms.resolution,
+        window.innerWidth / CELL,
+        window.innerHeight / CELL,
+      );
+      gl.uniform1f(uniforms.burn, burn);
+      gl.uniform1f(uniforms.time, (time - start) / 1000);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     },
     clear() {

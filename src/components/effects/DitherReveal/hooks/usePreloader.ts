@@ -57,7 +57,9 @@ function usePreloader({
         const reveal = getReveal()!;
         reveal.setMode("fill");
         reveal.setSeed(Math.random() * 100);
-        reveal.draw(1, performance.now());
+        // Origin on the bottom edge, so that the burn advances upward.
+        reveal.ignite(window.innerWidth / 2, window.innerHeight);
+        reveal.draw(0, performance.now());
         setLanding("landing");
         setCover("revealing");
       });
@@ -74,7 +76,7 @@ function usePreloader({
     const element = coverRef.current!;
     const animation = element.getAnimations()[0];
     const finished = animation
-      ? follow(animation, () => readCover(element))
+      ? follow(animation, () => 1 - readCover(element))
       : Promise.resolve(getReveal()?.clear());
     finished.then(() => setCover("done"));
   }, [cover, coverRef, getReveal, follow]);

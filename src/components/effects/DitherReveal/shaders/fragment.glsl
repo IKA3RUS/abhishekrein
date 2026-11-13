@@ -1,15 +1,23 @@
 // Uses highp because the hash overflows in 16-bit mediump on mobile GPUs.
 precision highp float;
 
-uniform float cover;
-uniform float time;
+uniform float burn; // Burn progress, 0 to 1.
+uniform float time; // Seconds since ignite().
 uniform float seed;
 uniform float scale;
 uniform float mode; // 0 is frontier and fill, 1 is frontier only, 2 is a soft mask.
+uniform vec2 origin; // Burn origin, in cells from the bottom left.
+uniform vec2 resolution; // Viewport size, in cells.
 uniform vec3 fill;
 uniform vec3 frontier;
+uniform vec3 ember;
 
-const float EDGE = 0.08; // Frontier width in noise units.
+const float EDGE = 0.04; // Frontier smoothstep half-width, in order units.
+const float TONGUES = 0.25; // Amplitude of the advected fbm warp, in order units.
+const float HOLES = 0.6; // Weight of the drifting fbm term that fragments the front.
+const float IGNITION = 0.08; // Ignition scorch radius before the burn starts, in reach units.
+const float LEAD = 0.06; // Scorch lead over the burn threshold, in order units.
+const float SCORCH = 0.45; // Maximum dither density of the scorch layer.
 
 float hash(vec2 p) {
   return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
@@ -54,27 +62,56 @@ float ditherThreshold(vec2 cell) {
 void main() {
   vec2 cell = gl_FragCoord.xy * scale;
 
-  // Orders pixels by drifting fbm, normalised to 0–1.
-  vec2 drift = vec2(time * 0.15, -time * 0.1);
-  float order = fbm(cell * 0.012 + seed + drift);
-  order = clamp((order - 0.25) / 0.5, 0.0, 1.0);
+  // Distance from the origin, normalised to 0 at the nearest viewport point and 1 at the farthest corner.
+  vec2 offset = cell - origin;
+  float near = length(max(vec2(0.0), max(-origin, origin - resolution)));
+  float far = length(max(abs(origin), abs(resolution - origin)));
+  float reach = (length(offset) - near) / (far - near);
 
-  float threshold = mix(-EDGE, 1.0 + EDGE, cover);
+  // Drifting fbm term that fragments the front into holes, ramped in with distance so that the origin burns first.
+  vec2 drift = vec2(time * 0.15, -time * 0.1);
+  float holes = clamp((fbm(cell * 0.012 + seed + drift) - 0.25) / 0.5, 0.0, 1.0);
+  holes *= smoothstep(0.0, 0.25, reach);
+
+  // Fbm advected away from the origin, which forms tongues along the front.
+  // Attenuates advection near the origin, where the radial field converges into a pinwheel artefact.
+  vec2 outward = offset / max(length(offset), 1.0);
+  outward *= smoothstep(0.0, 80.0, length(offset));
+  float flame = fbm(cell * 0.01 + seed * 1.7 - outward * time * 1.2);
+
+  float order = (reach + HOLES * holes + TONGUES * (flame - 0.5)) / (1.0 + HOLES);
+  order = clamp(order, 0.0, 1.0);
+
+  float burnThreshold = mix(-EDGE, 1.0 + EDGE, burn);
 
   if (mode > 1.5) {
-    gl_FragColor = vec4(smoothstep(order - EDGE, order + EDGE, threshold));
+    gl_FragColor = vec4(smoothstep(order - EDGE, order + EDGE, burnThreshold));
     return;
   }
 
-  // Adds grain for a ragged frontier.
-  order = mix(order, hash(cell + seed), 0.12);
-  float covered = smoothstep(order - EDGE, order + EDGE, threshold);
+  // Per-cell hash grain, reseeded at 24 Hz, for a ragged and flickering frontier.
+  order = mix(order, hash(cell + seed + floor(time * 24.0)), 0.12);
+  float burnt = smoothstep(order - EDGE, order + EDGE, burnThreshold);
+  if (burnt >= 1.0) discard;
 
-  if (covered <= ditherThreshold(cell)) discard;
-  if (covered >= 1.0) {
-    if (mode > 0.5) discard;
-    gl_FragColor = vec4(fill, 1.0);
+  float dither = ditherThreshold(cell);
+  if (burnt > dither) {
+    gl_FragColor = vec4(frontier, 1.0);
     return;
   }
-  gl_FragColor = vec4(frontier, 1.0);
+
+  // Scorch layer: an fbm-perturbed disc that grows from the origin after ignition, then leads the burn threshold by LEAD.
+  float crackle = hash(cell + seed + floor(time * 24.0)) - 0.5;
+  float kindling = reach * (1.0 + 2.0 * (flame - 0.5)) + 0.03 * crackle;
+  float kindled = IGNITION * (1.0 - exp(-time * 2.5));
+  float ignited = smoothstep(kindling - EDGE * 0.5, kindling + EDGE * 0.5, kindled);
+  float heat = burn + LEAD * smoothstep(0.0, 0.1, burn);
+  float scorched = max(ignited, smoothstep(order - EDGE * 2.0, order + EDGE * 2.0, heat));
+  if (scorched * SCORCH > dither) {
+    gl_FragColor = vec4(ember, 1.0);
+    return;
+  }
+
+  if (mode > 0.5) discard;
+  gl_FragColor = vec4(fill, 1.0);
 }
