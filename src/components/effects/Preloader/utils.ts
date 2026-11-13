@@ -64,11 +64,14 @@ function watchPreloaderFigure() {
   );
 }
 
-/** Sets data-preloader-seen on <html> after the first load in a session. Runs inline, so it must be self-contained. */
+/** Sets data-preloader-seen on <html> after the first load in a session, except on reloads, which cover the page while it loads again. Runs inline, so it must be self-contained. */
 function markPreloaderSeen() {
   const key = "preloader-seen";
+  const [navigation] = performance.getEntriesByType(
+    "navigation",
+  ) as PerformanceNavigationTiming[];
   try {
-    if (sessionStorage.getItem(key)) {
+    if (sessionStorage.getItem(key) && navigation?.type !== "reload") {
       document.documentElement.setAttribute("data-preloader-seen", "");
     } else {
       sessionStorage.setItem(key, "1");
