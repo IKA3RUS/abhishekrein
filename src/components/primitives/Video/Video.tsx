@@ -1,6 +1,6 @@
 import { useEffect, useImperativeHandle, useRef } from "react";
 
-import Hls from "hls.js";
+import type Hls from "hls.js";
 
 import { useInView } from "@/hooks/useInView";
 
@@ -39,20 +39,21 @@ function Video({
     if (video.src || hlsRef.current) return;
     if (deferred || (lazy && !inView)) return;
 
-    if (isHls) {
-      if (Hls.isSupported()) {
-        const hls = new Hls();
-        hlsRef.current = hls;
-        hls.loadSource(src);
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, () => {
-          video.play().catch(() => {});
-        });
-      } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-        video.src = src;
-        video.load();
-        video.play().catch(() => {});
-      }
+    let cancelled = false;
+
+    if (isHls && !video.canPlayType("application/vnd.apple.mpegurl")) {
+      import("hls.js/light")
+        .then(({ default: Hls }) => {
+          if (cancelled || !Hls.isSupported()) return;
+          const hls = new Hls();
+          hlsRef.current = hls;
+          hls.loadSource(src);
+          hls.attachMedia(video);
+          hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            video.play().catch(() => {});
+          });
+        })
+        .catch(() => {});
     } else {
       video.src = src;
       video.load();
@@ -60,6 +61,7 @@ function Video({
     }
 
     return () => {
+      cancelled = true;
       hlsRef.current?.destroy();
       hlsRef.current = null;
     };
