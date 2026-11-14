@@ -27,6 +27,16 @@ export const Route = createRootRoute({
       },
     ],
     links: [
+      ...[
+        "/fonts/FunnelDisplay%5Bwght%5D.woff2",
+        "/fonts/FunnelSans%5Bwght%5D.woff2",
+      ].map((href) => ({
+        rel: "preload",
+        as: "font",
+        type: "font/woff2",
+        href,
+        crossOrigin: "anonymous" as const,
+      })),
       {
         rel: "stylesheet",
         href: globalsCss,
