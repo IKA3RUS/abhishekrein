@@ -14,6 +14,7 @@ const MAX_IGNITION_FRAMES = 600; // Ignition frame limit for a navigation that n
 const CLICK_WINDOW = 1000; // Maximum interval in ms between a press and navigation for the press to set the origin.
 const SMOULDER_IN = 0.15; // Fade-in in seconds, which masks the discontinuity of a random loop offset.
 const SMOULDER_OUT = 0.9; // Fade-out in seconds under the burn, matched to the onset of burn.mp3 at about 0.7s.
+const MASK_LAYERS = 5; // Mask data URLs kept in the rule at once, so each stays for this many frames.
 
 /** Resolves the burn origin in CSS px: the recent press, else the centre of the focused anchor, else the viewport centre. */
 function navigationOrigin(press: { x: number; y: number; time: number }) {
@@ -97,16 +98,16 @@ function useRouteReveal({
         play("burn");
         smoulder?.stop(SMOULDER_OUT);
 
-        // Alternates two mask layers so a data URL that is still decoding never leaves the new page unmasked.
+        // Cycles mask layers so a data URL that is still loading never leaves the new page unmasked.
         let layer = 0;
-        const masks = ["none", "none"];
+        const masks = Array<string>(MASK_LAYERS).fill("none");
         const read = () =>
           readCover(document.documentElement, TRANSITION_PSEUDO);
 
         follow(animation, read, (time) => {
           mask.reveal.draw(read(), time);
           masks[layer] = `url(${mask.canvas.toDataURL()})`;
-          layer = 1 - layer;
+          layer = (layer + 1) % MASK_LAYERS;
           mask.style.textContent = `::view-transition-new(root) { mask-image: ${masks.join(", ")}; }`;
         }).then(() => {
           // Keeps the new page unmasked for the extra frame the transition renders after the animation ends.
