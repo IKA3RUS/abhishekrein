@@ -36,10 +36,12 @@ function Avatar({
 function AvatarImage({
   src,
   alt,
+  loading,
   className,
 }: {
   src: string;
   alt: string;
+  loading?: "lazy";
   className?: string;
 }) {
   const { fallbackRef } = useContext(AvatarContext);
@@ -48,6 +50,7 @@ function AvatarImage({
     <img
       src={src}
       alt={alt}
+      loading={loading}
       className={cn("absolute inset-0 size-full object-cover", className)}
       onError={(e) => {
         e.currentTarget.style.display = "none";

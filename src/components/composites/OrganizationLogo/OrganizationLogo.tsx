@@ -15,11 +15,13 @@ const ORGANIZATION_LOGOS_BASE_PATH = "/images/common/logos/";
 function OrganizationLogo({
   organization,
   color,
+  loading,
   className,
   ...props
 }: {
   organization: string;
   color: string;
+  loading?: "lazy";
   className?: string;
 }) {
   return (
@@ -30,6 +32,7 @@ function OrganizationLogo({
       <AvatarImage
         src={`${ORGANIZATION_LOGOS_BASE_PATH}${kebabCase(organization)}-logo.webp`}
         alt={`${organization} logo`}
+        loading={loading}
         className="static object-contain"
       />
       <AvatarFallback color={color}>

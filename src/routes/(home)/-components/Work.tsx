@@ -101,6 +101,7 @@ function WorkCard({
               <OrganizationLogo
                 organization={organization.name}
                 color={work.color}
+                loading="lazy"
               />
             </Fragment>
           ))}
