@@ -83,6 +83,10 @@ function WorkCard({
         {work.cover.type === "video" && (
           <DeferredVideo
             src={`/videos/work/${noCase(work._meta.path)}/${work.cover.filename}`}
+            poster={
+              work.cover.poster &&
+              `/videos/work/${noCase(work._meta.path)}/${work.cover.poster}`
+            }
             className="size-full object-cover"
             lazy={false}
           />

@@ -4,7 +4,8 @@
   "year": 2022,
   "cover": {
     "type": "video",
-    "filename": "cover.mp4"
+    "filename": "cover.mp4",
+    "poster": "cover-poster.webp"
   },
   "organizations": [
     {
