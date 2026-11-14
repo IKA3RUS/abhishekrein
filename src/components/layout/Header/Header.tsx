@@ -86,7 +86,7 @@ function HeaderLogo({ className }: { className?: string }) {
   const { variant } = useHeader();
 
   return (
-    <Link to="/">
+    <Link to="/" aria-label="abhishek rein, home">
       <Logo
         data-preloader-target
         className={cn(
