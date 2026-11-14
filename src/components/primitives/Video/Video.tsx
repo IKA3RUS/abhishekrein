@@ -8,7 +8,10 @@ interface VideoProps extends React.VideoHTMLAttributes<HTMLVideoElement> {
   ref?: React.Ref<HTMLVideoElement>;
   src: string;
   lazy?: boolean;
-  lazyThresholdPx?: number;
+  /** Element observed to trigger lazy loading. Defaults to the video element. */
+  lazyTarget?: React.RefObject<Element | null>;
+  /** Margin around the viewport used when observing `lazyTarget`. */
+  lazyMargin?: string;
   loop?: boolean;
   /** Holds off loading while true. */
   deferred?: boolean;
@@ -18,7 +21,8 @@ function Video({
   ref,
   src,
   lazy = true,
-  lazyThresholdPx = 300,
+  lazyTarget,
+  lazyMargin = "300px",
   loop = true,
   deferred = false,
   ...props
@@ -26,8 +30,8 @@ function Video({
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
   useImperativeHandle(ref, () => videoRef.current!, []);
-  const inView = useInView(videoRef, {
-    margin: `${lazyThresholdPx}px`,
+  const inView = useInView(lazyTarget ?? videoRef, {
+    margin: lazyMargin,
     once: true,
   });
 

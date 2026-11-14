@@ -4,10 +4,11 @@ import { usePreloaderDone } from "@/components/effects/Preloader";
 
 import { Video } from "./Video";
 
-/** Renders a Video that waits for the preloader to finish, which needs the bandwidth. One on screen at mount loads right away and holds the preloader until its first frame instead, so it doesn't pop in after the reveal. */
-function DeferredVideo(
-  props: Omit<React.ComponentProps<typeof Video>, "deferred" | "ref">,
-) {
+/** Renders a Video that waits for the preloader to finish, which needs the bandwidth. One on screen at mount loads right away and holds the preloader until its first frame instead, so it doesn't pop in after the reveal. Uses `lazyTarget` for the visibility check when provided. */
+function DeferredVideo({
+  lazyTarget,
+  ...props
+}: Omit<React.ComponentProps<typeof Video>, "deferred" | "ref">) {
   const preloaderDone = usePreloaderDone();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [onScreen, setOnScreen] = useState(false);
@@ -16,7 +17,9 @@ function DeferredVideo(
   useLayoutEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    const { top, bottom } = video.getBoundingClientRect();
+    const { top, bottom } = (
+      lazyTarget?.current ?? video
+    ).getBoundingClientRect();
     if (bottom <= 0 || top >= window.innerHeight) return;
 
     // Set directly, so the hold exists in this commit rather than the next render.
@@ -33,10 +36,15 @@ function DeferredVideo(
       video.removeEventListener("error", release);
       release();
     };
-  }, []);
+  }, [lazyTarget]);
 
   return (
-    <Video {...props} ref={videoRef} deferred={!preloaderDone && !onScreen} />
+    <Video
+      {...props}
+      ref={videoRef}
+      lazyTarget={lazyTarget}
+      deferred={!preloaderDone && !onScreen}
+    />
   );
 }
 
