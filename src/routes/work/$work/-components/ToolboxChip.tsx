@@ -45,7 +45,7 @@ function ToolboxChip({
               <div key={index} className="flex gap-2">
                 <Avatar className="size-5 min-h-5 min-w-5 rounded-none">
                   <AvatarImage
-                    src={`${TOOL_LOGOS_BASE_PATH}${kebabCase(tool)}-logo.png`}
+                    src={`${TOOL_LOGOS_BASE_PATH}${kebabCase(tool)}-logo.webp`}
                     alt={`${tool} logo`}
                     className="object-contain"
                   />

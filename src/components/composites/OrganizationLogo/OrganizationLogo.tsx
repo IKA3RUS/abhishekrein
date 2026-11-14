@@ -28,7 +28,7 @@ function OrganizationLogo({
       {...props}
     >
       <AvatarImage
-        src={`${ORGANIZATION_LOGOS_BASE_PATH}${kebabCase(organization)}-logo.png`}
+        src={`${ORGANIZATION_LOGOS_BASE_PATH}${kebabCase(organization)}-logo.webp`}
         alt={`${organization} logo`}
         className="static object-contain"
       />
