@@ -20,7 +20,7 @@ function Hotkey({
 
   return (
     <KbdGroup {...props}>
-      {[...formatForDisplay(keys)]
+      {[...formatForDisplay(keys, { platform: "mac" })]
         .filter((char) => char.trim())
         .map((char, i) => (
           <Kbd key={i}>{char}</Kbd>
