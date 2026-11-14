@@ -3,6 +3,7 @@ import { useEffect, useImperativeHandle, useRef } from "react";
 import type Hls from "hls.js";
 
 import { useInView } from "@/hooks/useInView";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 interface VideoProps extends React.VideoHTMLAttributes<HTMLVideoElement> {
   ref?: React.Ref<HTMLVideoElement>;
@@ -34,6 +35,7 @@ function Video({
     margin: lazyMargin,
     once: true,
   });
+  const reducedMotion = useReducedMotion();
 
   const isHls = src.endsWith(".m3u8");
 
@@ -53,15 +55,11 @@ function Video({
           hlsRef.current = hls;
           hls.loadSource(src);
           hls.attachMedia(video);
-          hls.on(Hls.Events.MANIFEST_PARSED, () => {
-            video.play().catch(() => {});
-          });
         })
         .catch(() => {});
     } else {
       video.src = src;
       video.load();
-      video.play().catch(() => {});
     }
 
     return () => {
@@ -71,10 +69,18 @@ function Video({
     };
   }, [deferred, inView, src, lazy, isHls]);
 
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video?.currentSrc) return;
+    if (reducedMotion) video.pause();
+    else video.play().catch(() => {});
+  }, [reducedMotion]);
+
   return (
     <video
       ref={videoRef}
-      preload={lazy ? "none" : "auto"}
+      autoPlay={!reducedMotion}
+      preload={lazy && !reducedMotion ? "none" : "auto"}
       loop={loop}
       muted
       playsInline

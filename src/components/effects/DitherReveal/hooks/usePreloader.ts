@@ -6,6 +6,8 @@ import {
   preloaderSeen,
 } from "@/components/effects/Preloader";
 
+import { prefersReducedMotion } from "@/lib/reduced-motion";
+
 import { readCover, waitForPreloaderHolds } from "../utils";
 import type { RevealControls } from "./useReveal";
 
@@ -29,14 +31,11 @@ function usePreloader({
 
   useEffect(() => {
     const element = coverRef.current!;
-    const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
 
     // Skips when seen this session, under reduced motion, without WebGL, or after the cover fallback ran.
     if (
       preloaderSeen() ||
-      reducedMotion ||
+      prefersReducedMotion() ||
       !getReveal() ||
       getComputedStyle(element).opacity === "0"
     ) {

@@ -5,6 +5,7 @@ import { useRouter } from "@tanstack/react-router";
 import { usePreloaderDone } from "@/components/effects/Preloader";
 
 import { type Playback, useSound } from "@/hooks/useSound";
+import { prefersReducedMotion } from "@/lib/reduced-motion";
 
 import { SOUNDS, VOLUME } from "../sounds";
 import { TRANSITION_PSEUDO, findViewTransition, readCover } from "../utils";
@@ -54,7 +55,7 @@ function useRouteReveal({
 
     const unsubscribe = router.subscribe("onBeforeLoad", ({ pathChanged }) => {
       if (!pathChanged) return;
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      if (prefersReducedMotion()) return;
       const reveal = getReveal();
       const mask = getMask();
       if (!reveal || !mask) return;
