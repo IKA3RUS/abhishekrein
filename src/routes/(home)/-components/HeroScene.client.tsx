@@ -14,6 +14,7 @@ import * as THREE from "three";
 import { Cloud, Clouds } from "@/components/effects/Clouds";
 
 import { useBreakpointValue } from "@/hooks/useBreakpointValue";
+import { useInView } from "@/hooks/useInView";
 import { useWorldBounds } from "@/hooks/useWorldBounds";
 import { cn } from "@/lib/cn";
 import { Dither } from "@/shaders/dither/Dither";
@@ -139,6 +140,7 @@ function OnReady({ onReady }: { onReady: () => void }) {
 
 function HeroScene({ onShown }: { onShown?: () => void }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(wrapperRef);
   const [ready, setReady] = useState(false);
   const onReady = useCallback(() => setReady(true), []);
 
@@ -168,6 +170,8 @@ function HeroScene({ onShown }: { onShown?: () => void }) {
       )}
     >
       <Canvas
+        // Stops rendering while the hero is scrolled out of view.
+        frameloop={inView ? "always" : "never"}
         dpr={1}
         gl={{ powerPreference: "high-performance", antialias: false }}
       >
