@@ -6,7 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Header, HeaderAction, HeaderLogo } from "@/components/layout/Header";
 
 // Not the Clouds index, which pulls in three
-import { CLOUD_URL } from "@/components/effects/Clouds/texture";
+import { CLOUD_URL } from "@/components/effects/Clouds/utils";
 
 import { Hero } from "./-components/Hero";
 import { Work } from "./-components/Work";
