@@ -14,7 +14,7 @@ import { useRouteReveal } from "./hooks/useRouteReveal";
  * Reads the CSS-animated --cover value every frame for timing.
  * Masks the new route with a low-resolution copy of the noise because CSS cannot mask with a live canvas.
  */
-function DitherReveal() {
+function BurnTransition() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const coverRef = useRef<HTMLDivElement>(null);
   const preloaderRef = useRef<PreloaderHandle>(null);
@@ -38,10 +38,10 @@ function DitherReveal() {
       <canvas
         ref={canvasRef}
         aria-hidden
-        className="pointer-events-none fixed inset-0 z-100 size-full [image-rendering:pixelated] [view-transition-name:dither-reveal]"
+        className="pointer-events-none fixed inset-0 z-100 size-full [image-rendering:pixelated] [view-transition-name:burn-transition]"
       />
     </>
   );
 }
 
-export { DitherReveal };
+export { BurnTransition };

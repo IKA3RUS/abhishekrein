@@ -1,4 +1,4 @@
-/* Registers the cover amount as a number so it can animate. <DitherReveal /> reads it every frame. */
+/* Registers the cover amount as a number so it can animate. <BurnTransition /> reads it every frame. */
 @property --cover {
   syntax: "<number>";
   inherits: false;
@@ -35,7 +35,7 @@
   mix-blend-mode: normal;
 }
 
-/* Hides the new page until <DitherReveal /> sets the first mask. */
+/* Hides the new page until <BurnTransition /> sets the first mask. */
 ::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
@@ -45,12 +45,12 @@
 }
 
 /* Keeps the live canvas above the snapshots. */
-::view-transition-group(dither-reveal),
-::view-transition-new(dither-reveal) {
+::view-transition-group(burn-transition),
+::view-transition-new(burn-transition) {
   animation: none;
 }
 
-::view-transition-old(dither-reveal) {
+::view-transition-old(burn-transition) {
   display: none;
 }
 

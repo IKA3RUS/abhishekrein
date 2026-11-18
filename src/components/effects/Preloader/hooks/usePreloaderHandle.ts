@@ -11,7 +11,7 @@ interface PreloaderHandle {
   exited(): Promise<void>;
 }
 
-/** Exposes the PreloaderHandle that DitherReveal uses to sequence the preloader. */
+/** Exposes the PreloaderHandle that BurnTransition uses to sequence the preloader. */
 function usePreloaderHandle(
   ref: Ref<PreloaderHandle> | undefined,
   preloaderRef: RefObject<HTMLDivElement | null>,

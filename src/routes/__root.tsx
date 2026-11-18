@@ -2,7 +2,7 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
-import { DitherReveal } from "@/components/effects/DitherReveal";
+import { BurnTransition } from "@/components/effects/BurnTransition";
 import { PreloaderScript } from "@/components/effects/Preloader";
 
 import globalsCss from "@/styles/globals.css?url";
@@ -56,7 +56,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <main className="relative">{children}</main>
-        <DitherReveal />
+        <BurnTransition />
         <TanStackDevtools
           config={{
             position: "bottom-right",

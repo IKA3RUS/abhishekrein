@@ -5,7 +5,7 @@
 @import "./colors.css";
 @import "./typography.css";
 @import "./animations.css";
-@import "../components/effects/DitherReveal/DitherReveal.css";
+@import "../components/effects/BurnTransition/BurnTransition.css";
 @import "../components/effects/Preloader/Preloader.css";
 @import "./variants.css";
 

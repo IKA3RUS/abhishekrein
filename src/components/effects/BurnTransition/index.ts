@@ -1,0 +1,1 @@
+export { BurnTransition } from "./BurnTransition";
