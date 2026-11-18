@@ -31,10 +31,27 @@ function useRouteReveal({
 }: Pick<RevealControls, "getReveal" | "getMask" | "getHeat" | "follow">) {
   const router = useRouter();
   // Defers fetching until the preloader completes, to avoid contending for bandwidth.
+  const preloaderDone = usePreloaderDone();
   const { play } = useSound(SOUNDS, {
     volume: 0.5,
-    preload: usePreloaderDone(),
+    preload: preloaderDone,
   });
+
+  // Creates the renderers and compiles their shaders while the browser is
+  // idle, rather than on the first navigation.
+  useEffect(() => {
+    if (!preloaderDone || prefersReducedMotion()) return;
+    const warm = () => {
+      getMask();
+      getHeat();
+    };
+    if (typeof requestIdleCallback === "undefined") {
+      const timeout = setTimeout(warm, 0);
+      return () => clearTimeout(timeout);
+    }
+    const idle = requestIdleCallback(warm, { timeout: 2000 });
+    return () => cancelIdleCallback(idle);
+  }, [preloaderDone, getMask, getHeat]);
 
   useEffect(() => {
     const press = { x: 0, y: 0, time: -Infinity };
