@@ -9,6 +9,8 @@ interface Mask {
   canvas: HTMLCanvasElement;
   reveal: Reveal;
   style: HTMLStyleElement;
+  /** CSS px per mask pixel */
+  cell: number;
 }
 
 /**
@@ -23,6 +25,24 @@ interface Heat {
   update: () => void;
   /** Removes the distortion */
   reset: () => void;
+}
+
+/**
+ * Full reveals mask the new page and warp the old one. Clip reveals cut the
+ * new page out with a clip-path and skip the warp, for devices that draw
+ * masks and filters slowly.
+ */
+type Quality = "full" | "clip";
+
+/** Reads the quality chosen earlier this session. */
+function readQuality(): Quality {
+  try {
+    return sessionStorage.getItem("burn-transition-quality") === "clip"
+      ? "clip"
+      : "full";
+  } catch {
+    return "full";
+  }
 }
 
 /** Returns a 1px data URL of the grey that means no displacement. */
@@ -97,7 +117,23 @@ function useReveal(canvasRef: RefObject<HTMLCanvasElement | null>) {
   const revealRef = useRef<Reveal | null>(null);
   const maskRef = useRef<Mask | null>(null);
   const heatRef = useRef<Heat | null>(null);
+  const qualityRef = useRef<Quality | null>(null);
   const frameRef = useRef(0);
+
+  const getQuality = useCallback(() => {
+    qualityRef.current ??= readQuality();
+    return qualityRef.current;
+  }, []);
+
+  /** Switches to clip reveals for the rest of the session. */
+  const lowerQuality = useCallback(() => {
+    qualityRef.current = "clip";
+    try {
+      sessionStorage.setItem("burn-transition-quality", "clip");
+    } catch {
+      // Keeps the lower quality for this page only.
+    }
+  }, []);
 
   const getReveal = useCallback(() => {
     revealRef.current ??= createReveal(canvasRef.current!, "fill");
@@ -112,7 +148,8 @@ function useReveal(canvasRef: RefObject<HTMLCanvasElement | null>) {
       if (!reveal) return null;
       const style = document.createElement("style");
       document.head.append(style);
-      maskRef.current = { canvas, reveal, style };
+      // 8 cells of 2px each
+      maskRef.current = { canvas, reveal, style, cell: 16 };
     }
     return maskRef.current;
   }, []);
@@ -128,18 +165,40 @@ function useReveal(canvasRef: RefObject<HTMLCanvasElement | null>) {
     return heatRef.current;
   }, [getMask]);
 
-  /** Draws each frame until the animation finishes. */
+  /**
+   * Draws each frame until the animation finishes. With measure, times the
+   * first 300ms of frames and lowers the quality if their median is under
+   * 30fps.
+   *
+   * onFrame receives whether that timing is still running.
+   */
   const follow = useCallback(
     (
       animation: Animation,
       read: () => number,
-      onFrame?: (time: number, progress: number) => void,
+      onFrame?: (time: number, progress: number, measuring: boolean) => void,
+      { measure = false }: { measure?: boolean } = {},
     ) => {
       const reveal = getReveal();
       cancelAnimationFrame(frameRef.current);
 
+      let measuring = measure && getQuality() === "full";
+      let first: number | null = null;
+      let previous = 0;
+      const durations: number[] = [];
+
       return new Promise<void>((resolve) => {
         const tick = (time: number) => {
+          if (measuring) {
+            if (first === null) first = time;
+            else durations.push(time - previous);
+            previous = time;
+            if (time - first >= 300) {
+              measuring = false;
+              durations.sort((a, b) => a - b);
+              if (durations[durations.length >> 1] > 1000 / 30) lowerQuality();
+            }
+          }
           if (
             animation.playState === "finished" ||
             animation.playState === "idle"
@@ -151,18 +210,18 @@ function useReveal(canvasRef: RefObject<HTMLCanvasElement | null>) {
           // Read once per frame as it forces a style lookup
           const progress = read();
           reveal?.draw(progress, time);
-          onFrame?.(time, progress);
+          onFrame?.(time, progress, measuring);
           frameRef.current = requestAnimationFrame(tick);
         };
         frameRef.current = requestAnimationFrame(tick);
       });
     },
-    [getReveal],
+    [getReveal, getQuality, lowerQuality],
   );
 
   const stop = useCallback(() => cancelAnimationFrame(frameRef.current), []);
 
-  return { getReveal, getMask, getHeat, follow, stop };
+  return { getReveal, getMask, getHeat, getQuality, follow, stop };
 }
 
 type RevealControls = ReturnType<typeof useReveal>;

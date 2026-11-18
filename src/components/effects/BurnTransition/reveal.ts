@@ -98,6 +98,18 @@ function createReveal(canvas: HTMLCanvasElement, mode: Mode, scale = 1) {
       gl.uniform1f(uniforms.time, (time - start) / 1000);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     },
+    /** Copies the last draw into out, bottom row first. Call it in the same task as draw. */
+    read(out: Uint8Array) {
+      gl.readPixels(
+        0,
+        0,
+        canvas.width,
+        canvas.height,
+        gl.RGBA,
+        gl.UNSIGNED_BYTE,
+        out,
+      );
+    },
     clear() {
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT);
