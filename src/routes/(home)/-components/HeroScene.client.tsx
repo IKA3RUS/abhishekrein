@@ -36,6 +36,9 @@ import { useViewportPosition } from "@/hooks/useViewportPosition";
 import { useWorldBounds } from "@/hooks/useWorldBounds";
 import { cn } from "@/lib/cn";
 
+// Frame cap of the hero scene
+const MAX_FPS = 60;
+
 // Size in px of the blocks the Dither pass samples the scene in
 const DITHER_BLOCK = 4;
 
@@ -44,10 +47,13 @@ function DiveRig({
   section,
   worldRef,
   whiteoutRef,
+  coveredRef,
 }: {
   section: RefObject<HTMLElement | null>;
   worldRef: RefObject<THREE.Group | null>;
   whiteoutRef: RefObject<HTMLDivElement | null>;
+  // True while the whiteout covers the scene
+  coveredRef: RefObject<boolean>;
 }) {
   const reducedMotion = useReducedMotion();
   const progress = useRef(0);
@@ -74,6 +80,7 @@ function DiveRig({
     const opacity = THREE.MathUtils.smoothstep(p, 0.55, 1);
     if (whiteoutRef.current)
       whiteoutRef.current.style.opacity = String(opacity);
+    coveredRef.current = opacity > 0.999;
   }, -2);
 
   return null;
@@ -265,6 +272,50 @@ function Sun({ sunPosition }: { sunPosition: THREE.Vector2 }) {
   );
 }
 
+// Renders at up to MAX_FPS and pauses while hidden
+function FrameDriver({
+  running,
+  paused,
+}: {
+  running: boolean;
+  paused: () => boolean;
+}) {
+  const get = useThree((state) => state.get);
+
+  // Time only advances on rendered frames
+  useEffect(() => {
+    const { clock } = get();
+    clock.stop();
+    clock.autoStart = false;
+  }, [get]);
+
+  useEffect(() => {
+    if (!running) return;
+    let frame = 0;
+    let slot = -Infinity;
+    let previous: number | null = null;
+
+    const tick = (time: number) => {
+      frame = requestAnimationFrame(tick);
+      // Allows 1ms of rAF jitter
+      if (time - slot < 1000 / MAX_FPS - 1) return;
+      // Avoids drifting after a slow frame
+      slot = Math.max(slot + 1000 / MAX_FPS, time - 1000 / MAX_FPS);
+
+      const step = previous === null ? 0 : (time - previous) / 1000;
+      previous = time;
+      if (paused()) return;
+      const { advance, clock } = get();
+      // Caps the step after a stall
+      advance(clock.elapsedTime + Math.min(step, 0.1));
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [running, paused, get]);
+
+  return null;
+}
+
 // Renders the scene at one texel per DITHER_BLOCK. The Dither pass samples
 // one texel per block, so the full-size output looks the same.
 function BlockResolution({
@@ -303,11 +354,25 @@ function HeroScene({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const whiteoutRef = useRef<HTMLDivElement>(null);
   const worldRef = useRef<THREE.Group>(null);
+  const coveredRef = useRef(false);
   const composerRef = useRef<Composer>(null);
   const sunPosition = useMemo(() => new THREE.Vector2(0.5, 1), []);
   const inView = useInView(wrapperRef);
   const [ready, setReady] = useState(false);
   const onReady = useCallback(() => setReady(true), []);
+
+  // Pauses under the whiteout until the page scrolls back up
+  const paused = useCallback(() => {
+    if (!coveredRef.current) return false;
+    const el = section.current;
+    if (!el) return false;
+    const rect = el.getBoundingClientRect();
+    if (rect.height - window.innerHeight + rect.top > 0) {
+      coveredRef.current = false;
+      return false;
+    }
+    return true;
+  }, [section]);
 
   // Report once the fade-in has finished. If the scene was ready before its
   // first paint there's no transition to wait for.
@@ -335,16 +400,17 @@ function HeroScene({
       )}
     >
       <Canvas
-        // Stops rendering while the hero is scrolled out of view.
-        frameloop={inView ? "always" : "never"}
+        frameloop="never"
         dpr={1}
         gl={{ powerPreference: "high-performance", antialias: false }}
       >
+        <FrameDriver running={inView} paused={paused} />
         <Suspense fallback={null}>
           <DiveRig
             section={section}
             worldRef={worldRef}
             whiteoutRef={whiteoutRef}
+            coveredRef={coveredRef}
           />
           <CameraRig />
           <group ref={worldRef}>
