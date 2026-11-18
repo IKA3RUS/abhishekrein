@@ -61,7 +61,9 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor)
 
   // Apply pixelation effect based on grid size and ratio
   float pixelSize = gridSize * pixelSizeRatio;
-  vec2 pixelatedUV = floor(fragCoord / pixelSize) * pixelSize / resolution;
+  // Samples each block at its centre, which is a texel centre when the input
+  // is rendered at 1 / pixelSize of the output
+  vec2 pixelatedUV = (floor(fragCoord / pixelSize) + 0.5) * pixelSize / resolution;
   baseColor = texture2D(inputBuffer, pixelatedUV).rgb;
 
   // Shaded mode dithers on coverage, then tints thick cloud towards shadeColor.

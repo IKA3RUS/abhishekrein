@@ -72,12 +72,12 @@ class DitherEffect extends Effect {
   /**
    * Updates the effect parameters on each frame
    * @param renderer - The WebGL renderer
-   * @param inputBuffer - The input render target
+   * @param _inputBuffer - The input render target, unused
    * @param deltaTime - Time elapsed since the last frame
    */
   update(
     renderer: THREE.WebGLRenderer,
-    inputBuffer: THREE.WebGLRenderTarget,
+    _inputBuffer: THREE.WebGLRenderTarget,
     deltaTime: number,
   ): void {
     // Update time uniform
@@ -86,13 +86,13 @@ class DitherEffect extends Effect {
       timeUniform.value += deltaTime;
     }
 
-    // Update resolution uniform to match current render target
+    // Matches the output rather than the input, which may be rendered smaller
     const resolutionUniform = this.uniforms.get("resolution");
     if (
       resolutionUniform !== undefined &&
       resolutionUniform.value instanceof THREE.Vector2
     ) {
-      resolutionUniform.value.set(inputBuffer.width, inputBuffer.height);
+      renderer.getDrawingBufferSize(resolutionUniform.value);
     }
   }
 

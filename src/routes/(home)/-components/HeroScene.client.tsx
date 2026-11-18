@@ -17,6 +17,7 @@ import {
 } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { EffectComposer } from "@react-three/postprocessing";
+import type { EffectComposer as Composer } from "postprocessing";
 import * as THREE from "three";
 
 import {
@@ -34,6 +35,9 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useViewportPosition } from "@/hooks/useViewportPosition";
 import { useWorldBounds } from "@/hooks/useWorldBounds";
 import { cn } from "@/lib/cn";
+
+// Size in px of the blocks the Dither pass samples the scene in
+const DITHER_BLOCK = 4;
 
 // Raises the scene and fades it to white as the hero scrolls
 function DiveRig({
@@ -261,6 +265,28 @@ function Sun({ sunPosition }: { sunPosition: THREE.Vector2 }) {
   );
 }
 
+// Renders the scene at one texel per DITHER_BLOCK. The Dither pass samples
+// one texel per block, so the full-size output looks the same.
+function BlockResolution({
+  composerRef,
+}: {
+  composerRef: RefObject<Composer | null>;
+}) {
+  const size = useThree((state) => state.size);
+
+  // Runs after the composer sizes its buffers to the canvas
+  useEffect(() => {
+    const composer = composerRef.current;
+    if (!composer) return;
+    const width = Math.max(1, Math.round(size.width / DITHER_BLOCK));
+    const height = Math.max(1, Math.round(size.height / DITHER_BLOCK));
+    composer.inputBuffer.setSize(width, height);
+    composer.outputBuffer.setSize(width, height);
+  }, [composerRef, size]);
+
+  return null;
+}
+
 function OnReady({ onReady }: { onReady: () => void }) {
   useEffect(() => onReady(), [onReady]);
   return null;
@@ -277,6 +303,7 @@ function HeroScene({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const whiteoutRef = useRef<HTMLDivElement>(null);
   const worldRef = useRef<THREE.Group>(null);
+  const composerRef = useRef<Composer>(null);
   const sunPosition = useMemo(() => new THREE.Vector2(0.5, 1), []);
   const inView = useInView(wrapperRef);
   const [ready, setReady] = useState(false);
@@ -327,15 +354,16 @@ function HeroScene({
           </group>
           <OnReady onReady={onReady} />
         </Suspense>
-        <EffectComposer>
+        <EffectComposer ref={composerRef} multisampling={0}>
           <Dither
             gridSize={1}
-            pixelSizeRatio={2}
+            pixelSizeRatio={DITHER_BLOCK}
             grayscaleOnly
             shade={1}
             shadeColor="#dcd6d2"
           />
         </EffectComposer>
+        <BlockResolution composerRef={composerRef} />
       </Canvas>
       <div
         ref={whiteoutRef}
