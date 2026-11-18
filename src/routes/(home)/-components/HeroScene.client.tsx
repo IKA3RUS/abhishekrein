@@ -1,4 +1,5 @@
 import {
+  type RefObject,
   Suspense,
   useCallback,
   useEffect,
@@ -30,8 +31,49 @@ import { useBreakpointValue } from "@/hooks/useBreakpointValue";
 import { useInView } from "@/hooks/useInView";
 import { usePointer } from "@/hooks/usePointer";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useViewportPosition } from "@/hooks/useViewportPosition";
 import { useWorldBounds } from "@/hooks/useWorldBounds";
 import { cn } from "@/lib/cn";
+
+// Raises the scene and fades it to white as the hero scrolls
+function DiveRig({
+  section,
+  worldRef,
+  whiteoutRef,
+}: {
+  section: RefObject<HTMLElement | null>;
+  worldRef: RefObject<THREE.Group | null>;
+  whiteoutRef: RefObject<HTMLDivElement | null>;
+}) {
+  const reducedMotion = useReducedMotion();
+  const progress = useRef(0);
+  const sectionRect = useViewportPosition(section);
+
+  useFrame((_, delta) => {
+    const rect = sectionRect.current;
+    if (!rect || !worldRef.current) return;
+
+    const travel = Math.max(rect.height - window.innerHeight, 1);
+    const target = THREE.MathUtils.clamp(-rect.top / travel, 0, 1);
+    progress.current = THREE.MathUtils.damp(
+      progress.current,
+      target,
+      // Follows the scroll closely
+      16,
+      Math.min(delta, 0.1),
+    );
+
+    const p = progress.current;
+    const fall = reducedMotion ? 0 : THREE.MathUtils.smoothstep(p, 0, 1);
+    worldRef.current.position.y = 2.5 * fall;
+
+    const opacity = THREE.MathUtils.smoothstep(p, 0.55, 1);
+    if (whiteoutRef.current)
+      whiteoutRef.current.style.opacity = String(opacity);
+  }, -2);
+
+  return null;
+}
 
 // Moves the camera with the pointer for parallax, keeping the z = 0 plane fixed
 function CameraRig() {
@@ -151,25 +193,36 @@ function FloatingClouds({ sunPosition }: { sunPosition: THREE.Vector2 }) {
 
 // Fades the bottom of the hero to solid white under the clouds, dithered by the same pass.
 // Lights are drawn blue so the Dither pass doesn't shade them like cloud.
+// Continues below the frame.
 function Horizon() {
   const { unclampedWidth, bottom, height } = useWorldBounds();
   const horizonHeight = height * 0.4;
+  const groundDepth = height * 3;
 
   return (
-    <Plane
-      args={[unclampedWidth, horizonHeight]}
-      position={[0, bottom + horizonHeight / 2, 0]}
-      renderOrder={-1}
-    >
-      <meshBasicMaterial color="blue" transparent depthWrite={false}>
-        <GradientTexture
-          attach="alphaMap"
-          stops={[0, 0.55, 1]}
-          colors={["black", "gray", "white"]}
-          size={256}
-        />
-      </meshBasicMaterial>
-    </Plane>
+    <>
+      <Plane
+        args={[unclampedWidth, groundDepth]}
+        position={[0, bottom - groundDepth / 2, 0]}
+        renderOrder={-1}
+      >
+        <meshBasicMaterial color="blue" transparent depthWrite={false} />
+      </Plane>
+      <Plane
+        args={[unclampedWidth, horizonHeight]}
+        position={[0, bottom + horizonHeight / 2, 0]}
+        renderOrder={-1}
+      >
+        <meshBasicMaterial color="blue" transparent depthWrite={false}>
+          <GradientTexture
+            attach="alphaMap"
+            stops={[0, 0.55, 1]}
+            colors={["black", "gray", "white"]}
+            size={256}
+          />
+        </meshBasicMaterial>
+      </Plane>
+    </>
   );
 }
 
@@ -213,8 +266,17 @@ function OnReady({ onReady }: { onReady: () => void }) {
   return null;
 }
 
-function HeroScene({ onShown }: { onShown?: () => void }) {
+function HeroScene({
+  section,
+  onShown,
+}: {
+  // Section whose scroll drives the descent
+  section: RefObject<HTMLElement | null>;
+  onShown?: () => void;
+}) {
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const whiteoutRef = useRef<HTMLDivElement>(null);
+  const worldRef = useRef<THREE.Group>(null);
   const sunPosition = useMemo(() => new THREE.Vector2(0.5, 1), []);
   const inView = useInView(wrapperRef);
   const [ready, setReady] = useState(false);
@@ -252,10 +314,17 @@ function HeroScene({ onShown }: { onShown?: () => void }) {
         gl={{ powerPreference: "high-performance", antialias: false }}
       >
         <Suspense fallback={null}>
+          <DiveRig
+            section={section}
+            worldRef={worldRef}
+            whiteoutRef={whiteoutRef}
+          />
           <CameraRig />
-          <Horizon />
-          <FloatingClouds sunPosition={sunPosition} />
-          <Sun sunPosition={sunPosition} />
+          <group ref={worldRef}>
+            <Horizon />
+            <FloatingClouds sunPosition={sunPosition} />
+            <Sun sunPosition={sunPosition} />
+          </group>
           <OnReady onReady={onReady} />
         </Suspense>
         <EffectComposer>
@@ -268,6 +337,11 @@ function HeroScene({ onShown }: { onShown?: () => void }) {
           />
         </EffectComposer>
       </Canvas>
+      <div
+        ref={whiteoutRef}
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-white opacity-0"
+      />
     </div>
   );
 }

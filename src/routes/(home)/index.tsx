@@ -36,7 +36,8 @@ function App() {
           <EmailButton />
         </HeaderAction>
       </Header>
-      <div className="relative z-1 bg-white pb-28">
+      {/* --hero-scroll sets the extra scroll length of the hero */}
+      <div className="relative z-1 bg-white pb-28 [--hero-scroll:80dvh]">
         <Hero />
         <Work />
       </div>
