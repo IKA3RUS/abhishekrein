@@ -148,6 +148,10 @@ function useRouteReveal({
               dropHeat();
             }
 
+            // Removes the distortion once the fire has left the screen.
+            // Safari drops to 15fps while the warp stays applied that late.
+            if (cover > 0.9) dropHeat();
+
             // Distorts only once the timing keeps the full reveal, so devices
             // that switch never apply it.
             if (heat && !measuring) {
