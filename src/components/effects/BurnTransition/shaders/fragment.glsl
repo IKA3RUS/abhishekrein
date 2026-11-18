@@ -5,7 +5,7 @@ uniform float burn; // Burn progress, 0 to 1.
 uniform float time; // Seconds since ignite().
 uniform float seed;
 uniform float scale;
-uniform float mode; // 0 is frontier and fill, 1 is frontier only, 2 is a soft mask.
+uniform float mode; // 0 is frontier and fill, 1 is frontier only, 2 is a soft mask, 3 is a heat displacement map.
 uniform vec2 origin; // Burn origin, in cells from the bottom left.
 uniform vec2 resolution; // Viewport size, in cells.
 uniform vec3 fill;
@@ -78,6 +78,20 @@ void main() {
 
   // The frontier is a smoothstep of half-width 0.04 in order units.
   float burnThreshold = mix(-0.04, 1.04, burn);
+
+  // Displacement map for the old page, read by an SVG feDisplacementMap. Red and green carry x and y offsets around 0.5.
+  // Within 0.08 ahead of the front the page is pulled toward the fire by 0.3, as paper shrinks when it chars, and shimmers with rising heat by 0.6, both as shares of the displacement range.
+  if (mode > 2.5) {
+    float ahead = order - burnThreshold;
+    float heat = (1.0 - smoothstep(0.0, 0.08, ahead)) * smoothstep(-0.04, 0.0, ahead);
+    heat *= smoothstep(0.0, 0.3, time);
+    vec2 rising = cell * 0.03 + seed + vec2(0.0, -time * 4.0);
+    vec2 shimmer = vec2(noise(rising), noise(rising + 17.0)) - 0.5;
+    vec2 displacement = heat * (outward * 0.3 + shimmer * 0.6);
+    // Flips y, since SVG offsets point down.
+    gl_FragColor = vec4(0.5 + displacement.x, 0.5 - displacement.y, 0.5, 1.0);
+    return;
+  }
 
   if (mode > 1.5) {
     gl_FragColor = vec4(smoothstep(order - 0.04, order + 0.04, burnThreshold));

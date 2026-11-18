@@ -26,8 +26,9 @@ function navigationOrigin(press: { x: number; y: number; time: number }) {
 function useRouteReveal({
   getReveal,
   getMask,
+  getHeat,
   follow,
-}: Pick<RevealControls, "getReveal" | "getMask" | "follow">) {
+}: Pick<RevealControls, "getReveal" | "getMask" | "getHeat" | "follow">) {
   const router = useRouter();
   // Defers fetching until the preloader completes, to avoid contending for bandwidth.
   const { play } = useSound(SOUNDS, {
@@ -54,8 +55,12 @@ function useRouteReveal({
       const mask = getMask();
       if (!reveal || !mask) return;
 
-      // Clears the final mask rule of the previous transition.
+      // Distorts the old page around the fire when available.
+      const heat = getHeat();
+
+      // Clears the final rules of the previous transition.
       mask.style.textContent = "";
+      heat?.reset();
 
       // Ignites immediately, so that the scorch develops while the next route loads.
       const origin = navigationOrigin(press);
@@ -102,8 +107,15 @@ function useRouteReveal({
         const read = () =>
           readCover(document.documentElement, TRANSITION_PSEUDO);
 
-        follow(animation, read, (time) => {
-          mask.reveal.draw(read(), time);
+        follow(animation, read, (time, cover) => {
+          if (heat) {
+            heat.reveal.setMode(heat.mode);
+            heat.reveal.draw(cover, time);
+            heat.update();
+          }
+          mask.reveal.setMode("mask");
+          mask.reveal.draw(cover, time);
+
           masks[layer] = `url(${mask.canvas.toDataURL()})`;
           layer = (layer + 1) % 5;
           mask.style.textContent = `::view-transition-new(root) { mask-image: ${masks.join(", ")}; }`;
@@ -111,6 +123,7 @@ function useRouteReveal({
           // Keeps the new page unmasked for the extra frame the transition renders after the animation ends.
           mask.style.textContent =
             "::view-transition-new(root) { mask-image: none; }";
+          heat?.reset();
         });
       };
       requestAnimationFrame(waitForTransition);
@@ -123,7 +136,7 @@ function useRouteReveal({
         capture: true,
       });
     };
-  }, [router, play, follow, getReveal, getMask]);
+  }, [router, play, follow, getReveal, getMask, getHeat]);
 }
 
 export { useRouteReveal };
