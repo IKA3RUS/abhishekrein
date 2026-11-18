@@ -12,6 +12,4 @@ const SOUNDS = {
   burn: "/sounds/burn.mp3",
 };
 
-const VOLUME = 0.5;
-
-export { SOUNDS, VOLUME };
+export { SOUNDS };

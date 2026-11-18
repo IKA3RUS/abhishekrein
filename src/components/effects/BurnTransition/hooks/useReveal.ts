@@ -2,8 +2,6 @@ import { type RefObject, useCallback, useRef } from "react";
 
 import { type Reveal, createReveal } from "../reveal";
 
-const MASK_SCALE = 8; // Cells per mask pixel.
-
 interface Mask {
   canvas: HTMLCanvasElement;
   reveal: Reveal;
@@ -24,7 +22,8 @@ function useReveal(canvasRef: RefObject<HTMLCanvasElement | null>) {
   const getMask = useCallback(() => {
     if (!maskRef.current) {
       const canvas = document.createElement("canvas");
-      const reveal = createReveal(canvas, "mask", MASK_SCALE);
+      // 8 cells per mask pixel
+      const reveal = createReveal(canvas, "mask", 8);
       if (!reveal) return null;
       const style = document.createElement("style");
       document.head.append(style);

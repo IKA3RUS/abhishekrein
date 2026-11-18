@@ -12,13 +12,6 @@ uniform vec3 fill;
 uniform vec3 frontier;
 uniform vec3 ember;
 
-const float EDGE = 0.04; // Frontier smoothstep half-width, in order units.
-const float TONGUES = 0.25; // Amplitude of the advected fbm warp, in order units.
-const float HOLES = 0.6; // Weight of the drifting fbm term that fragments the front.
-const float IGNITION = 0.08; // Ignition scorch radius before the burn starts, in reach units.
-const float LEAD = 0.06; // Scorch lead over the burn threshold, in order units.
-const float SCORCH = 0.45; // Maximum dither density of the scorch layer.
-
 float hash(vec2 p) {
   return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
 }
@@ -79,19 +72,21 @@ void main() {
   outward *= smoothstep(0.0, 80.0, length(offset));
   float flame = fbm(cell * 0.01 + seed * 1.7 - outward * time * 1.2);
 
-  float order = (reach + HOLES * holes + TONGUES * (flame - 0.5)) / (1.0 + HOLES);
+  // Weights the holes by 0.6 and the tongues by 0.25, in order units.
+  float order = (reach + 0.6 * holes + 0.25 * (flame - 0.5)) / 1.6;
   order = clamp(order, 0.0, 1.0);
 
-  float burnThreshold = mix(-EDGE, 1.0 + EDGE, burn);
+  // The frontier is a smoothstep of half-width 0.04 in order units.
+  float burnThreshold = mix(-0.04, 1.04, burn);
 
   if (mode > 1.5) {
-    gl_FragColor = vec4(smoothstep(order - EDGE, order + EDGE, burnThreshold));
+    gl_FragColor = vec4(smoothstep(order - 0.04, order + 0.04, burnThreshold));
     return;
   }
 
   // Per-cell hash grain, reseeded at 24 Hz, for a ragged and flickering frontier.
   order = mix(order, hash(cell + seed + floor(time * 24.0)), 0.12);
-  float burnt = smoothstep(order - EDGE, order + EDGE, burnThreshold);
+  float burnt = smoothstep(order - 0.04, order + 0.04, burnThreshold);
   if (burnt >= 1.0) discard;
 
   float dither = ditherThreshold(cell);
@@ -100,14 +95,15 @@ void main() {
     return;
   }
 
-  // Scorch layer: an fbm-perturbed disc that grows from the origin after ignition, then leads the burn threshold by LEAD.
+  // Scorch layer. An fbm-perturbed disc that grows to 0.08 of the reach after ignition, then leads the burn threshold by 0.06.
+  // It dithers to at most 0.45 density.
   float crackle = hash(cell + seed + floor(time * 24.0)) - 0.5;
   float kindling = reach * (1.0 + 2.0 * (flame - 0.5)) + 0.03 * crackle;
-  float kindled = IGNITION * (1.0 - exp(-time * 2.5));
-  float ignited = smoothstep(kindling - EDGE * 0.5, kindling + EDGE * 0.5, kindled);
-  float heat = burn + LEAD * smoothstep(0.0, 0.1, burn);
-  float scorched = max(ignited, smoothstep(order - EDGE * 2.0, order + EDGE * 2.0, heat));
-  if (scorched * SCORCH > dither) {
+  float kindled = 0.08 * (1.0 - exp(-time * 2.5));
+  float ignited = smoothstep(kindling - 0.02, kindling + 0.02, kindled);
+  float heat = burn + 0.06 * smoothstep(0.0, 0.1, burn);
+  float scorched = max(ignited, smoothstep(order - 0.08, order + 0.08, heat));
+  if (scorched * 0.45 > dither) {
     gl_FragColor = vec4(ember, 1.0);
     return;
   }

@@ -1,5 +1,3 @@
-const MAX_PRELOADER_HOLD = 30000; // Counts from hydration.
-
 const TRANSITION_PSEUDO = "::view-transition-image-pair(root)";
 
 /** Converts a CSS color token to linear 0–1 RGB. */
@@ -29,7 +27,7 @@ function findViewTransition() {
     );
 }
 
-/** Resolves once no element has data-preloader-hold, or after MAX_PRELOADER_HOLD. Pages render the attribute until they are ready. */
+/** Resolves once no element has data-preloader-hold, or 30s after hydration. Pages render the attribute until they are ready. */
 function waitForPreloaderHolds() {
   return new Promise<void>((resolve) => {
     const finish = () => {
@@ -46,7 +44,7 @@ function waitForPreloaderHolds() {
       childList: true,
       attributeFilter: ["data-preloader-hold"],
     });
-    const timeout = setTimeout(finish, MAX_PRELOADER_HOLD);
+    const timeout = setTimeout(finish, 30000);
     check();
   });
 }

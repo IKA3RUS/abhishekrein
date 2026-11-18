@@ -2,8 +2,6 @@ import fragmentShader from "./shaders/fragment.glsl?raw";
 import vertexShader from "./shaders/vertex.glsl?raw";
 import { resolveColor } from "./utils";
 
-const CELL = 2; // Dither cell in CSS px. Matches the hero Dither pass.
-
 type Mode = "fill" | "frontier" | "mask";
 const MODES: Record<Mode, number> = { fill: 0, frontier: 1, mask: 2 };
 
@@ -74,9 +72,10 @@ function createReveal(canvas: HTMLCanvasElement, mode: Mode, scale = 1) {
       origin = { x, y };
       start = performance.now();
     },
+    /** Draws in 2px cells. */
     draw(burn: number, time: number) {
-      const width = Math.ceil(window.innerWidth / (CELL * scale));
-      const height = Math.ceil(window.innerHeight / (CELL * scale));
+      const width = Math.ceil(window.innerWidth / (2 * scale));
+      const height = Math.ceil(window.innerHeight / (2 * scale));
       if (canvas.width !== width || canvas.height !== height) {
         canvas.width = width;
         canvas.height = height;
@@ -87,13 +86,13 @@ function createReveal(canvas: HTMLCanvasElement, mode: Mode, scale = 1) {
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.uniform2f(
         uniforms.origin,
-        origin.x / CELL,
-        (window.innerHeight - origin.y) / CELL,
+        origin.x / 2,
+        (window.innerHeight - origin.y) / 2,
       );
       gl.uniform2f(
         uniforms.resolution,
-        window.innerWidth / CELL,
-        window.innerHeight / CELL,
+        window.innerWidth / 2,
+        window.innerHeight / 2,
       );
       gl.uniform1f(uniforms.burn, burn);
       gl.uniform1f(uniforms.time, (time - start) / 1000);
