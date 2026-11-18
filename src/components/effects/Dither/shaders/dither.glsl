@@ -1,12 +1,5 @@
-/**
- * Dithering shader implementation
- * Applies a dithering effect to the rendered scene
- *
- * Credits:
- * Original dithering pattern: https://www.shadertoy.com/view/ltSSzW
- */
-
-const ditheringShader = /*glsl*/ `
+// Dithering shader. Applies an ordered dither to the rendered scene.
+// Original dithering pattern: https://www.shadertoy.com/view/ltSSzW
 uniform float ditheringEnabled;
 uniform vec2 resolution;
 uniform float gridSize;
@@ -71,7 +64,7 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor)
   vec2 pixelatedUV = floor(fragCoord / pixelSize) * pixelSize / resolution;
   baseColor = texture2D(inputBuffer, pixelatedUV).rgb;
 
-  // Shaded mode: dither on coverage, then tint thick cloud towards shadeColor.
+  // Shaded mode dithers on coverage, then tints thick cloud towards shadeColor.
   // Clouds are drawn white and lights (sun, horizon) pure blue, so the red
   // channel carries cloud density alone. Every output is a valid premultiplied
   // colour, so HDR displays render it the same as everything else.
@@ -131,6 +124,4 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor)
 
   // Output final color preserving alpha
   outputColor = vec4(baseColor, inputColor.a);
-}`;
-
-export default ditheringShader;
+}

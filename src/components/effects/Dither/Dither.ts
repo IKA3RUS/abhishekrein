@@ -2,7 +2,7 @@ import { wrapEffect } from "@react-three/postprocessing";
 import { Effect } from "postprocessing";
 import * as THREE from "three";
 
-import ditherShader from "./DitherShader";
+import ditherShader from "./shaders/dither.glsl?raw";
 
 /**
  * Interface for dithering effect options
@@ -94,20 +94,6 @@ class DitherEffect extends Effect {
     ) {
       resolutionUniform.value.set(inputBuffer.width, inputBuffer.height);
     }
-  }
-
-  /**
-   * Performs initialization tasks
-   * @param renderer - The WebGL renderer
-   * @param alpha - Whether the renderer uses the alpha channel
-   * @param frameBufferType - The type of the main frame buffers
-   */
-  initialize(
-    renderer: THREE.WebGLRenderer,
-    alpha: boolean,
-    frameBufferType: number,
-  ): void {
-    // No special initialization required for this effect
   }
 
   /**

@@ -12,12 +12,12 @@ import { useMotionValue, useSpring } from "motion/react";
 import * as THREE from "three";
 
 import { Cloud, Clouds } from "@/components/effects/Clouds";
+import { Dither } from "@/components/effects/Dither";
 
 import { useBreakpointValue } from "@/hooks/useBreakpointValue";
 import { useInView } from "@/hooks/useInView";
 import { useWorldBounds } from "@/hooks/useWorldBounds";
 import { cn } from "@/lib/cn";
-import { Dither } from "@/shaders/dither/Dither";
 
 function FloatingClouds() {
   const Y_OFFSET = -3;

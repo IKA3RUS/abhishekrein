@@ -45,7 +45,7 @@ float fbm(vec2 p) {
   return value;
 }
 
-// Uses the same 4x4 matrix as the hero Dither pass in src/shaders/dither/DitherShader.ts.
+// Uses the same 4x4 matrix as the hero Dither pass in src/components/effects/Dither/shaders/dither.glsl.
 float ditherThreshold(vec2 cell) {
   vec2 p = floor(mod(cell, 4.0));
   vec4 column = p.x < 0.5 ? vec4(16.0, 5.0, 13.0, 1.0)
