@@ -16,7 +16,6 @@ import {
 } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { EffectComposer } from "@react-three/postprocessing";
-import { useMotionValue, useSpring } from "motion/react";
 import * as THREE from "three";
 
 import {
@@ -29,9 +28,52 @@ import { Dither } from "@/components/effects/Dither";
 
 import { useBreakpointValue } from "@/hooks/useBreakpointValue";
 import { useInView } from "@/hooks/useInView";
+import { usePointer } from "@/hooks/usePointer";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useWorldBounds } from "@/hooks/useWorldBounds";
 import { cn } from "@/lib/cn";
+
+// Moves the camera with the pointer for parallax, keeping the z = 0 plane fixed
+function CameraRig() {
+  const reducedMotion = useReducedMotion();
+  const pointer = usePointer();
+  const eased = useRef(new THREE.Vector2());
+  const velocity = useRef(new THREE.Vector2());
+  const base = useRef<THREE.Vector3 | null>(null);
+
+  // Runs before the clouds, which face this camera
+  useFrame(({ camera }, delta) => {
+    if (!(camera instanceof THREE.PerspectiveCamera)) return;
+    base.current ??= camera.position.clone();
+
+    // Critically damped spring. Lower stiffness feels heavier.
+    // Pointer in -1 to 1 across the viewport, centred when it leaves
+    const at = reducedMotion ? null : pointer.current;
+    const goalX = at ? (at.x / window.innerWidth) * 2 - 1 : 0;
+    const goalY = at ? 1 - (at.y / window.innerHeight) * 2 : 0;
+    const step = Math.min(delta, 0.1);
+    const p = eased.current;
+    const v = velocity.current;
+    v.x += ((goalX - p.x) * 2.2 ** 2 - 2 * 2.2 * v.x) * step;
+    v.y += ((goalY - p.y) * 2.2 ** 2 - 2 * 2.2 * v.y) * step;
+    p.addScaledVector(v, step);
+
+    const x = p.x * 0.6;
+    const y = p.y * 0.35;
+    camera.position.set(base.current.x + x, base.current.y + y, base.current.z);
+    camera.updateMatrixWorld();
+
+    // Shears the frustum so the z = 0 plane stays put
+    const distance = base.current.z;
+    camera.updateProjectionMatrix();
+    const m = camera.projectionMatrix.elements;
+    m[8] = (-m[0] * x) / distance;
+    m[9] = (-m[5] * y) / distance;
+    camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
+  }, -1);
+
+  return null;
+}
 
 function FloatingClouds({ sunPosition }: { sunPosition: THREE.Vector2 }) {
   const { unclampedWidth, height } = useWorldBounds();
@@ -46,37 +88,17 @@ function FloatingClouds({ sunPosition }: { sunPosition: THREE.Vector2 }) {
     { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter },
   );
 
-  const groupRef = useRef<THREE.Group>(null);
   const riseRef = useRef<THREE.Group>(null);
   const riseStart = useRef<number | null>(null);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  useEffect(() => {
-    const update = (e: MouseEvent) => {
-      mouseX.set((e.clientX / window.innerWidth) * 2 - 1);
-      mouseY.set((e.clientY / window.innerHeight) * 2 - 1);
-    };
-    window.addEventListener("mousemove", update);
-    return () => window.removeEventListener("mousemove", update);
-  }, []);
-
-  const springX = useSpring(mouseX, { stiffness: 20, damping: 30 });
-  const springY = useSpring(mouseY, { stiffness: 25, damping: 30 });
 
   useFrame(({ clock }) => {
-    if (!groupRef.current || !riseRef.current) return;
+    if (!riseRef.current) return;
     const t = clock.elapsedTime;
 
     riseStart.current ??= t;
     // Intro rise
     const rise = Math.min((t - riseStart.current) / 2.4, 1);
     riseRef.current.position.y = -1.5 * Math.pow(1 - rise, 3);
-    const noiseX = Math.sin(t * 0.3) * 0.4 + Math.sin(t * 0.7) * 0.2;
-    const noiseY = Math.cos(t * 0.2) * 0.3 + Math.cos(t * 0.5) * 0.15;
-
-    groupRef.current.position.x = springX.get() + noiseX;
-    groupRef.current.position.y = springY.get() + noiseY - 3;
   });
 
   return (
@@ -89,7 +111,7 @@ function FloatingClouds({ sunPosition }: { sunPosition: THREE.Vector2 }) {
         openings={openings}
       >
         <group position-y={height * 0.1}>
-          <group ref={groupRef}>
+          <group position-y={-3}>
             <Cloud
               seed={15}
               segments={30}
@@ -230,6 +252,7 @@ function HeroScene({ onShown }: { onShown?: () => void }) {
         gl={{ powerPreference: "high-performance", antialias: false }}
       >
         <Suspense fallback={null}>
+          <CameraRig />
           <Horizon />
           <FloatingClouds sunPosition={sunPosition} />
           <Sun sunPosition={sunPosition} />
