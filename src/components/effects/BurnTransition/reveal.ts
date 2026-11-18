@@ -2,8 +2,14 @@ import fragmentShader from "./shaders/fragment.glsl?raw";
 import vertexShader from "./shaders/vertex.glsl?raw";
 import { resolveColor } from "./utils";
 
-type Mode = "fill" | "frontier" | "mask" | "heat";
-const MODES: Record<Mode, number> = { fill: 0, frontier: 1, mask: 2, heat: 3 };
+type Mode = "fill" | "frontier" | "mask" | "heat" | "haze";
+const MODES: Record<Mode, number> = {
+  fill: 0,
+  frontier: 1,
+  mask: 2,
+  heat: 3,
+  haze: 4,
+};
 
 /** Creates a WebGL renderer for the dissolve on the canvas. Returns null without WebGL. */
 function createReveal(canvas: HTMLCanvasElement, mode: Mode, scale = 1) {

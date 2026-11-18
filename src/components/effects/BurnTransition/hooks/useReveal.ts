@@ -20,7 +20,7 @@ interface Mask {
 interface Heat {
   reveal: Reveal;
   /** Renderer mode that draws the map */
-  mode: "heat";
+  mode: "heat" | "haze";
   /** Applies the last draw to the old page */
   update: () => void;
   /** Removes the distortion */
@@ -112,6 +112,37 @@ function createWarp(mask: Mask, style: HTMLStyleElement): Heat {
   };
 }
 
+/**
+ * Blurs the old page where the map is opaque, through a layer above it.
+ * Firefox draws view-transition snapshots blank under feImage or
+ * feDisplacementMap, so it cannot use the warp.
+ */
+function createHaze(mask: Mask, style: HTMLStyleElement): Heat {
+  // Stays below the reveal canvas, which has z-index 100.
+  const layer = document.createElement("div");
+  layer.setAttribute("aria-hidden", "true");
+  layer.style.cssText =
+    "position: fixed; inset: 0; z-index: 99; pointer-events: none; view-transition-name: burn-transition-haze;";
+  document.body.append(layer);
+
+  // Cycles two layers, so a data URL that is still loading never drops the haze for a frame.
+  let next = 0;
+  const maps = ["none", "none"];
+  return {
+    reveal: mask.reveal,
+    mode: "haze",
+    update() {
+      maps[next] = `url(${mask.canvas.toDataURL()})`;
+      next = (next + 1) % maps.length;
+      style.textContent = `::view-transition-group(burn-transition-haze) { mask-image: ${maps.join(", ")}; }`;
+    },
+    reset() {
+      style.textContent = "";
+      maps.fill("none");
+    },
+  };
+}
+
 /** Creates the renderers on first use and draws them in step with CSS animations. */
 function useReveal(canvasRef: RefObject<HTMLCanvasElement | null>) {
   const revealRef = useRef<Reveal | null>(null);
@@ -160,7 +191,9 @@ function useReveal(canvasRef: RefObject<HTMLCanvasElement | null>) {
       if (!mask) return null;
       const style = document.createElement("style");
       document.head.append(style);
-      heatRef.current = createWarp(mask, style);
+      heatRef.current = (
+        navigator.userAgent.includes("Firefox") ? createHaze : createWarp
+      )(mask, style);
     }
     return heatRef.current;
   }, [getMask]);

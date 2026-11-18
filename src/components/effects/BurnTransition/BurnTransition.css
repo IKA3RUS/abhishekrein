@@ -54,6 +54,20 @@
   display: none;
 }
 
+/* Blurs the old page ahead of the fire in Firefox. <BurnTransition /> sets the mask. */
+::view-transition-group(burn-transition-haze) {
+  animation: none;
+  backdrop-filter: blur(4px);
+  mask-image: linear-gradient(transparent, transparent);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+}
+
+::view-transition-old(burn-transition-haze),
+::view-transition-new(burn-transition-haze) {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-image-pair(root),
   ::view-transition-old(root),

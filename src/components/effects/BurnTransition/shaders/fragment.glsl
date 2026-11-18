@@ -5,7 +5,7 @@ uniform float burn; // Burn progress, 0 to 1.
 uniform float time; // Seconds since ignite().
 uniform float seed;
 uniform float scale;
-uniform float mode; // 0 is frontier and fill, 1 is frontier only, 2 is a soft mask, 3 is a heat displacement map.
+uniform float mode; // 0 is frontier and fill, 1 is frontier only, 2 is a soft mask, 3 is a heat displacement map, 4 is a heat haze map.
 uniform vec2 origin; // Burn origin, in cells from the bottom left.
 uniform vec2 resolution; // Viewport size, in cells.
 uniform vec3 fill;
@@ -86,6 +86,11 @@ void main() {
     float heat = (1.0 - smoothstep(0.0, 0.08, ahead)) * smoothstep(-0.04, 0.0, ahead);
     heat *= smoothstep(0.0, 0.3, time);
     vec2 rising = cell * 0.03 + seed + vec2(0.0, -time * 4.0);
+    // Haze map. Draws the heat as alpha, flickering with the rising noise.
+    if (mode > 3.5) {
+      gl_FragColor = vec4(heat * (0.6 + 0.8 * noise(rising)));
+      return;
+    }
     vec2 shimmer = vec2(noise(rising), noise(rising + 17.0)) - 0.5;
     vec2 displacement = heat * (outward * 0.3 + shimmer * 0.6);
     // Flips y, since SVG offsets point down.
