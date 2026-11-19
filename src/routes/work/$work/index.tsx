@@ -19,6 +19,7 @@ import { Header, HeaderAction, HeaderLogo } from "@/components/layout/Header";
 
 import { AnimatedTypographyBeams } from "@/components/effects/AnimatedTypographyBeams";
 
+import { useOverscrollColor } from "@/hooks/useOverscrollColor";
 import { addBlockquoteCite } from "@/lib/remark/remark-blockquote-cite";
 import { addHeadingLinks } from "@/lib/remark/remark-heading-links";
 
@@ -91,6 +92,7 @@ export const Route = createFileRoute("/work/$work/")({
 
 function Work() {
   const work = Route.useLoaderData();
+  useOverscrollColor({ bottom: "var(--color-black)" });
 
   return (
     <>

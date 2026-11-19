@@ -8,6 +8,8 @@ import { Header, HeaderAction, HeaderLogo } from "@/components/layout/Header";
 // Not the Clouds index, which pulls in three
 import { CLOUD_URL } from "@/components/effects/Clouds/utils";
 
+import { useOverscrollColor } from "@/hooks/useOverscrollColor";
+
 import { Hero } from "./-components/Hero";
 import { Work } from "./-components/Work";
 
@@ -28,6 +30,11 @@ export const Route = createFileRoute("/(home)/")({
 });
 
 function App() {
+  useOverscrollColor({
+    top: "var(--color-violet-7)",
+    bottom: "var(--color-black)",
+  });
+
   return (
     <>
       <Header initial="collapsed">
