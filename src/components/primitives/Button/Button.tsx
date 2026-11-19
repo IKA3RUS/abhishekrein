@@ -103,7 +103,10 @@ function ButtonHotkey({
   return (
     <Hotkey
       onActivate={disabled ? undefined : trigger}
-      className={cn("absolute right-0 -bottom-8", className)}
+      className={cn(
+        "absolute right-0 -bottom-8 **:data-[slot=info-chip]:bg-neutral-3",
+        className,
+      )}
       {...props}
     />
   );
