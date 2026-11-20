@@ -27,7 +27,7 @@ function EmailButton({ ...props }) {
         <MailIcon />
       </ButtonLeadingIcon>
       <ButtonLabel>w@abhishekrein.xyz</ButtonLabel>
-      <ButtonTrailingIcon>
+      <ButtonTrailingIcon marquee={!isCopied}>
         {!isCopied ? <CopyAllIcon /> : <LibraryAddCheckIcon />}
       </ButtonTrailingIcon>
       <ButtonHotkey keys={copyEmailHotkey} />

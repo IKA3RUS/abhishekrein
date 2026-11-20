@@ -115,8 +115,11 @@ function ButtonHotkey({
 function ButtonTrailingIcon({
   className,
   children,
+  marquee = true,
   ...props
-}: HTMLAttributes<HTMLSpanElement>) {
+}: HTMLAttributes<HTMLSpanElement> & {
+  marquee?: boolean;
+}) {
   return (
     <span
       data-slot="trailing-icon"
@@ -126,7 +129,13 @@ function ButtonTrailingIcon({
       )}
       {...props}
     >
-      <span className="flex size-full items-center justify-center overflow-hidden *:group-hover/button:animate-marquee-x *:group-active/button:animate-marquee-x *:group-active/button:animation-duration-[0.5s] *:group-disabled/button:animate-none">
+      <span
+        className={cn(
+          "flex size-full items-center justify-center overflow-hidden",
+          marquee &&
+            "*:group-hover/button:animate-marquee-x *:group-active/button:animate-marquee-x *:group-active/button:animation-duration-[0.5s] *:group-disabled/button:animate-none",
+        )}
+      >
         {children}
       </span>
     </span>
