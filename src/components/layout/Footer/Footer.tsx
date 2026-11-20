@@ -47,7 +47,7 @@ function Footer() {
       <div className="p-2 sm:p-10">
         <div className="bg-black">
           <div className="relative mx-auto flex max-w-480 flex-col">
-            <div className="relative z-1 flex size-full flex-col justify-between gap-20 p-9 sm:p-20 xl:flex-row">
+            <div className="relative z-1 flex size-full flex-col justify-between gap-20 px-6 py-9 sm:p-20 xl:flex-row">
               <div className="flex flex-col gap-20 xl:flex-row xl:gap-0">
                 <div className="relative flex flex-col gap-4">
                   <p className="typography-head-3 text-white">abhishek rein</p>
@@ -75,14 +75,14 @@ function Footer() {
                 </div>
               </div>
               <div className="flex flex-col gap-20 sm:gap-12">
-                <div className="relative w-fit">
-                  <EmailButton />
+                <div className="relative w-fit max-sm:w-full">
+                  <EmailButton className="max-sm:w-full max-sm:*:data-[slot=label]:mr-0 max-sm:*:data-[slot=label]:block max-sm:*:data-[slot=label]:min-w-0 max-sm:*:data-[slot=label]:truncate" />
                   {near && (
                     <ClientOnly fallback={null}>
                       <Suspense fallback={null}>
                         <FooterCloud
                           running={inView}
-                          className="pointer-events-none absolute -top-20 -right-6 z-1 h-24 w-48 sm:-right-34 sm:h-36 sm:w-72 xl:right-auto xl:-left-44"
+                          className="pointer-events-none absolute -top-20 -right-4 z-1 h-24 w-48 sm:-right-34 sm:h-36 sm:w-72 xl:right-auto xl:-left-44"
                         />
                       </Suspense>
                     </ClientOnly>
@@ -120,12 +120,12 @@ function Footer() {
               className="absolute inset-0 size-full object-cover"
               src="/videos/common/evolution/evolution.m3u8"
             />
-            <span className="absolute -top-10 right-9 sm:-top-6 sm:right-20 md:-top-6 md:right-auto md:left-108">
+            <span className="absolute -top-10 right-6 sm:-top-6 sm:right-20 md:-top-6 md:right-auto md:left-108">
               <Glitch container={footerRef}>
                 <Pdf417Micrographic className="h-12 w-fit -rotate-12" />
               </Glitch>
             </span>
-            <span className="absolute right-9 bottom-18 sm:right-18 sm:bottom-21">
+            <span className="absolute right-6 bottom-18 sm:right-18 sm:bottom-21">
               <Glitch container={footerRef}>
                 <PsychologyMicrographic className="h-6 w-fit" />
               </Glitch>
@@ -134,7 +134,7 @@ function Footer() {
         </div>
       </div>
       <div className="bg-black px-2 sm:px-10">
-        <div className="z-1 mx-auto flex w-full max-w-480 items-center gap-2 px-9 py-4 sm:px-20 sm:py-2">
+        <div className="z-1 mx-auto flex w-full max-w-480 items-center gap-2 px-6 py-4 sm:px-20 sm:py-2">
           <AttributionIcon className="size-3 fill-violet-5" />
           <a
             className="typography-text-4 font-semibold text-violet-5"
