@@ -47,8 +47,8 @@ function Footer() {
       <div className="p-2 sm:p-10">
         <div className="bg-black">
           <div className="relative mx-auto flex max-w-480 flex-col overflow-hidden">
-            <div className="relative z-1 flex size-full flex-col justify-between gap-20 p-9 sm:p-20 lg:flex-row">
-              <div className="flex flex-col gap-20 lg:flex-row lg:gap-0">
+            <div className="relative z-1 flex size-full flex-col justify-between gap-20 p-9 sm:p-20 xl:flex-row">
+              <div className="flex flex-col gap-20 xl:flex-row xl:gap-0">
                 <div className="relative flex flex-col gap-4">
                   <p className="typography-head-3 text-white">abhishek rein</p>
                   <div className="relative z-1 w-fit typography-text-2 text-violet-5">
@@ -65,7 +65,7 @@ function Footer() {
                     </p>
                   </div>
                 </div>
-                <div className="flex flex-col justify-end gap-4 max-lg:items-end">
+                <div className="flex flex-col justify-end gap-4 max-xl:items-end">
                   <Logo className="size-8 fill-neutral-8" />
                   <div className="typography-text-2 text-white">
                     <p>handcrafted with a disturbingly</p>
@@ -82,7 +82,7 @@ function Footer() {
                       <Suspense fallback={null}>
                         <FooterCloud
                           running={inView}
-                          className="pointer-events-none absolute -top-20 -right-6 z-1 h-24 w-48 sm:-right-34 sm:h-36 sm:w-72 lg:right-auto lg:-left-44"
+                          className="pointer-events-none absolute -top-20 -right-6 z-1 h-24 w-48 sm:-right-34 sm:h-36 sm:w-72 xl:right-auto xl:-left-44"
                         />
                       </Suspense>
                     </ClientOnly>

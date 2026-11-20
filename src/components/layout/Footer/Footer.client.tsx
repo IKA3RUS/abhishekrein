@@ -14,7 +14,7 @@ const DITHER_BLOCK = 2;
 function Puff() {
   const cutRef = useCloudCut({ radius: 0.1, heal: 4 });
   const reducedMotion = useReducedMotion();
-  const side = useBreakpointValue({ base: 1, sm: -1, lg: 1 });
+  const side = useBreakpointValue({ base: 1, sm: -1, xl: 1 });
 
   return (
     <Clouds
