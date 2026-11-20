@@ -35,7 +35,7 @@ function Hero() {
         </ClientOnly>
       </div>
       <div className="absolute inset-x-0 top-0 flex h-dvh flex-col items-center justify-center">
-        <AnimatedTypographyBeams className="relative flex w-full flex-col items-center justify-center md:flex-row">
+        <AnimatedTypographyBeams className="relative flex w-full flex-col items-center justify-center overflow-x-clip md:flex-row">
           <span className="z-1 translate-y-1/3 typography-display-4 text-neutral-11 transition-[font-size] md:-translate-y-1/2 xl:typography-display-3">
             abhishek
           </span>
