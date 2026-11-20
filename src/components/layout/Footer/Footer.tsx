@@ -1,10 +1,14 @@
-import { useRef } from "react";
+import { Suspense, lazy, useRef } from "react";
+
+import { ClientOnly } from "@tanstack/react-router";
 
 import { DeferredVideo } from "@/components/primitives/Video";
 
 import { EmailButton } from "@/components/composites/EmailButton";
 
 import { Glitch } from "@/components/effects/Glitch";
+
+import { useInView } from "@/hooks/useInView";
 
 import AttributionIcon from "@material-symbols/svg-700/sharp/attribution-fill.svg?react";
 import TrendingFlatIcon from "@material-symbols/svg-700/sharp/trending_flat-fill.svg?react";
@@ -18,8 +22,12 @@ import PsychologyMicrographic from "@/assets/micrographics/psychology.svg?react"
 const X_URL = "https://x.com/ika3rus";
 const LINKEDIN_URL = "https://www.linkedin.com/in/ika3rus/";
 
+const FooterCloud = lazy(() => import("./Footer.client"));
+
 function Footer() {
   const footerRef = useRef<HTMLElement>(null);
+  const near = useInView(footerRef, { margin: "100% 0px", once: true });
+  const inView = useInView(footerRef);
 
   const socials = [
     {
@@ -67,7 +75,19 @@ function Footer() {
                 </div>
               </div>
               <div className="flex flex-col gap-20 sm:gap-12">
-                <EmailButton />
+                <div className="relative w-fit">
+                  <EmailButton />
+                  {near && (
+                    <ClientOnly fallback={null}>
+                      <Suspense fallback={null}>
+                        <FooterCloud
+                          running={inView}
+                          className="pointer-events-none absolute -top-20 -right-6 z-1 h-24 w-48 sm:-right-34 sm:h-36 sm:w-72 lg:right-auto lg:-left-44"
+                        />
+                      </Suspense>
+                    </ClientOnly>
+                  )}
+                </div>
                 <div className="flex flex-col gap-8">
                   {socials.map((social) => (
                     <a
