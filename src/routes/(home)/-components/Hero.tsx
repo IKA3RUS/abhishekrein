@@ -6,6 +6,7 @@ import {
   easeInOut,
   motion,
   useMotionTemplate,
+  useMotionValueEvent,
   useScroll,
   useTransform,
 } from "motion/react";
@@ -32,10 +33,15 @@ function Hero() {
   });
   const backgroundColor = useMotionTemplate`color-mix(in oklab, var(--color-violet-7), var(--color-white) ${whiteness}%)`;
 
+  // Switches the header to its light logo once the background is half white
+  const [light, setLight] = useState(false);
+  useMotionValueEvent(whiteness, "change", (value) => setLight(value > 50));
+
   return (
     <motion.section
       ref={sectionRef}
       style={{ backgroundColor }}
+      data-section-luminosity={light ? "light" : "dark"}
       // Holds the preloader until the clouds have faded in
       data-preloader-hold={sceneShown ? undefined : ""}
       // Scrolls for an extra --hero-scroll with the scene pinned

@@ -140,7 +140,10 @@ function WorkCard({
 
 export function Work() {
   return (
-    <section className="relative -mt-(--hero-scroll) bg-white before:pointer-events-none before:absolute before:inset-x-0 before:bottom-full before:h-[30dvh] before:bg-linear-to-b before:from-white/0 before:via-white/70 before:to-white sm:-mt-[calc(var(--hero-scroll)+10rem)]">
+    <section
+      data-section-luminosity="light"
+      className="relative -mt-(--hero-scroll) bg-white before:pointer-events-none before:absolute before:inset-x-0 before:bottom-full before:h-[30dvh] before:bg-linear-to-b before:from-white/0 before:via-white/70 before:to-white sm:-mt-[calc(var(--hero-scroll)+10rem)]"
+    >
       <div className="mx-auto flex max-w-480 flex-col gap-9 px-9 sm:px-20">
         <h1 className="typography-head-3">work</h1>
         <div className="grid w-full grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
