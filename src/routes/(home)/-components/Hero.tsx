@@ -2,6 +2,14 @@ import { Suspense, lazy, useCallback, useRef, useState } from "react";
 
 import { ClientOnly } from "@tanstack/react-router";
 
+import {
+  easeInOut,
+  motion,
+  useMotionTemplate,
+  useScroll,
+  useTransform,
+} from "motion/react";
+
 import { EmailButton } from "@/components/composites/EmailButton";
 
 import { AnimatedTypographyBeams } from "@/components/effects/AnimatedTypographyBeams";
@@ -15,9 +23,19 @@ function Hero() {
   const onSceneShown = useCallback(() => setSceneShown(true), []);
   const sectionRef = useRef<HTMLElement>(null);
 
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "start -50%"],
+  });
+  const whiteness = useTransform(scrollYProgress, [0, 1], [0, 100], {
+    ease: easeInOut,
+  });
+  const backgroundColor = useMotionTemplate`color-mix(in oklab, var(--color-violet-7), var(--color-white) ${whiteness}%)`;
+
   return (
-    <section
+    <motion.section
       ref={sectionRef}
+      style={{ backgroundColor }}
       // Holds the preloader until the clouds have faded in
       data-preloader-hold={sceneShown ? undefined : ""}
       // Scrolls for an extra --hero-scroll with the scene pinned
@@ -60,7 +78,7 @@ function Hero() {
         </div>
         <AscentFallIka3rusMicrographic className="absolute right-4 bottom-4 z-1" />
       </div>
-    </section>
+    </motion.section>
   );
 }
 
