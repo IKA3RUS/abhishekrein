@@ -47,7 +47,7 @@ function WorkCard({
 
   return (
     <div
-      className="group/card relative col-span-1 flex flex-col"
+      className="group/card relative col-span-1 flex flex-col self-start"
       style={{ marginTop: index * work.title.length * 5 }}
     >
       {linked ? (
