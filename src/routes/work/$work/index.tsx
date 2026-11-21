@@ -46,7 +46,8 @@ export const Route = createFileRoute("/work/$work/")({
   codeSplitGroupings: [["loader"], ["component"]],
   loader: ({ params: { work: slug } }) => {
     const work = findWork(slug);
-    const mdast = mdxParse(work.content);
+    // Copies into plain objects, since expression attributes carry acorn class instances that the loader data serializer rejects.
+    const mdast = structuredClone(mdxParse(work.content));
 
     const contextNode = mdast.children.find(
       (node) =>
