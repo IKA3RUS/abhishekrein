@@ -168,7 +168,7 @@ export function GalleryVideo({
   ...variants
 }: {
   basepath: string;
-  filename: string;
+  filename: string | string[];
   alt?: string;
   caption?: string;
   backgroundColor?: string;
@@ -197,7 +197,11 @@ export function GalleryVideo({
         style={{ backgroundColor: backgroundColor ?? "var(--color-neutral-1)" }}
       >
         <DeferredVideo
-          src={basepath + filename}
+          src={
+            typeof filename === "string"
+              ? basepath + filename
+              : filename.map((file) => basepath + file)
+          }
           aria-label={alt || "A video of a piece of work in this project"}
           width={width}
           height={height}

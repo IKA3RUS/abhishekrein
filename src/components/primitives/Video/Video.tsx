@@ -5,9 +5,31 @@ import type Hls from "hls.js";
 import { useInView } from "@/hooks/useInView";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
-interface VideoProps extends React.VideoHTMLAttributes<HTMLVideoElement> {
+/** Types checked with `canPlayType()`, by file extension. A `.mov` is assumed to hold HEVC with alpha, which only Safari renders; other browsers report no QuickTime support. */
+const SOURCE_TYPES: Record<string, string> = {
+  mov: 'video/quicktime; codecs="hvc1"',
+  mp4: "video/mp4",
+  webm: "video/webm",
+};
+
+/** Returns the first source the browser can play, falling back to the last. HLS streams always count as playable, through hls.js where native support is missing. */
+function pickSource(video: HTMLVideoElement, sources: string[]) {
+  return (
+    sources.find((source) => {
+      if (source.endsWith(".m3u8")) return true;
+      const type = SOURCE_TYPES[source.split(".").pop()!.toLowerCase()];
+      return !type || video.canPlayType(type) !== "";
+    }) ?? sources[sources.length - 1]
+  );
+}
+
+interface VideoProps extends Omit<
+  React.VideoHTMLAttributes<HTMLVideoElement>,
+  "src"
+> {
   ref?: React.Ref<HTMLVideoElement>;
-  src: string;
+  /** A source, or sources in order of preference. The first one the browser can play is used. */
+  src: string | string[];
   lazy?: boolean;
   /** Element observed to trigger lazy loading. Defaults to the video element. */
   lazyTarget?: React.RefObject<Element | null>;
@@ -37,7 +59,8 @@ function Video({
   });
   const reducedMotion = useReducedMotion();
 
-  const isHls = src.endsWith(".m3u8");
+  // A string key keeps the effect stable when an array literal is passed on each render.
+  const sourcesKey = typeof src === "string" ? src : src.join("\n");
 
   useEffect(() => {
     const video = videoRef.current;
@@ -46,19 +69,23 @@ function Video({
     if (deferred || (lazy && !inView)) return;
 
     let cancelled = false;
+    const source = pickSource(video, sourcesKey.split("\n"));
 
-    if (isHls && !video.canPlayType("application/vnd.apple.mpegurl")) {
+    if (
+      source.endsWith(".m3u8") &&
+      !video.canPlayType("application/vnd.apple.mpegurl")
+    ) {
       import("hls.js/light")
         .then(({ default: Hls }) => {
           if (cancelled || !Hls.isSupported()) return;
           const hls = new Hls();
           hlsRef.current = hls;
-          hls.loadSource(src);
+          hls.loadSource(source);
           hls.attachMedia(video);
         })
         .catch(() => {});
     } else {
-      video.src = src;
+      video.src = source;
       video.load();
     }
 
@@ -67,7 +94,7 @@ function Video({
       hlsRef.current?.destroy();
       hlsRef.current = null;
     };
-  }, [deferred, inView, src, lazy, isHls]);
+  }, [deferred, inView, sourcesKey, lazy]);
 
   useEffect(() => {
     const video = videoRef.current;
