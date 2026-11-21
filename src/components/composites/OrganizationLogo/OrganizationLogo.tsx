@@ -33,7 +33,7 @@ function OrganizationLogo({
         src={`${ORGANIZATION_LOGOS_BASE_PATH}${kebabCase(organization)}-logo.webp`}
         alt={`${organization} logo`}
         loading={loading}
-        className="static object-contain"
+        className="static h-full w-auto max-w-none"
       />
       <AvatarFallback color={color}>
         <CorporateFareIcon className="size-4 fill-white" />
